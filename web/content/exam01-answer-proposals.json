@@ -1,0 +1,470 @@
+{
+  "middle_test-003": {
+    "correctAnswers": null,
+    "explanation": "Gợi ý trả lời: chọn track chuyên sâu bạn đang theo học (AI Applications, AI Infrastructure hoặc AI Product). Đây là câu hỏi cá nhân hóa nên không có một phương án đúng chung để chấm."
+  },
+  "middle_test-001": {
+    "correctAnswers": [
+      "B"
+    ],
+    "explanation": "Đáp án đề xuất: B. Phù hợp nhất là phân tích sentiment trên 10.000 phản hồi mỗi ngày: AI xử lý lượng lớn ngôn ngữ không cấu trúc; các lựa chọn còn lại là quy tắc cố định."
+  },
+  "middle_test-002": {
+    "correctAnswers": [
+      "B"
+    ],
+    "explanation": "Đáp án đề xuất: B. Supervisor nhận yêu cầu, chọn worker phù hợp, theo dõi luồng việc và tổng hợp kết quả."
+  },
+  "middle_test-004": {
+    "correctAnswers": [
+      "B"
+    ],
+    "explanation": "Đáp án đề xuất: B. Semantic cache khớp theo độ tương đồng ngữ nghĩa, nên câu diễn đạt khác nhau có thể dùng lại cùng kết quả."
+  },
+  "middle_test-005": {
+    "correctAnswers": [
+      "C"
+    ],
+    "explanation": "Đáp án đề xuất: C. Base case với giả định và mốc thời gian rõ ràng là cơ sở thực tế để đánh giá ROI; best case không bảo đảm kết quả."
+  },
+  "middle_test-006": {
+    "correctAnswers": [
+      "C"
+    ],
+    "explanation": "Đáp án đề xuất: C. Thông tin đúng nhưng cũ thường chỉ ra lỗi freshness: pipeline cập nhật hoặc index/cache chưa được làm mới."
+  },
+  "middle_test-007": {
+    "correctAnswers": [
+      "B"
+    ],
+    "explanation": "Đáp án đề xuất: B. Phân loại email vào nhãn xác định là bài toán discriminative classification."
+  },
+  "middle_test-008": {
+    "correctAnswers": [
+      "B"
+    ],
+    "explanation": "Đáp án đề xuất: B. Theo dõi cả độ trễ tạo token, chất lượng, chi phí và drift để quan sát riêng các rủi ro của agent."
+  },
+  "middle_test-009": {
+    "correctAnswers": [
+      "B"
+    ],
+    "explanation": "Đáp án đề xuất: B. Phương án này có bối cảnh, nhiệm vụ, giọng điệu, giới hạn độ dài và CTA rõ — cụ thể hơn các prompt còn lại."
+  },
+  "middle_test-010": {
+    "correctAnswers": [
+      "B"
+    ],
+    "explanation": "Đáp án đề xuất: B. Dữ liệu lỗi thời hoặc kém chất lượng khiến retrieval và câu trả lời sai dù dùng model mạnh."
+  },
+  "middle_test-011": {
+    "correctAnswers": [
+      "A"
+    ],
+    "explanation": "Đáp án đề xuất: A. Prompt injection đưa chỉ dẫn độc hại qua input hoặc nội dung được truy xuất nhằm làm agent bỏ qua chỉ dẫn an toàn."
+  },
+  "middle_test-012": {
+    "correctAnswers": [
+      "A"
+    ],
+    "explanation": "Đáp án đề xuất: A. Grounding ràng buộc câu trả lời vào context được truy xuất, yêu cầu dẫn nguồn và thừa nhận khi thiếu chứng cứ."
+  },
+  "middle_test-013": {
+    "correctAnswers": [
+      "B"
+    ],
+    "explanation": "Đáp án đề xuất: B. API production cần kiểm soát truy cập, giới hạn tải, xử lý timeout, streaming phù hợp và versioning."
+  },
+  "middle_test-014": {
+    "correctAnswers": [
+      "B"
+    ],
+    "explanation": "Đáp án đề xuất: B. LLM judge hỗ trợ đánh giá nhưng có thể sai lệch; cần hiệu chỉnh và kết hợp đánh giá của con người."
+  },
+  "middle_test-015": {
+    "correctAnswers": [
+      "B"
+    ],
+    "explanation": "Đáp án đề xuất: B. Trước khi đổi model cần truy dấu lỗi qua retrieval, dữ liệu, prompt và eval; nâng model không tự sửa các lỗi đó."
+  },
+  "middle_test-016": {
+    "correctAnswers": [
+      "B"
+    ],
+    "explanation": "Đáp án đề xuất: B. ML là lĩnh vực rộng hơn; Deep Learning là một nhánh của Machine Learning."
+  },
+  "middle_test-017": {
+    "correctAnswers": [
+      "B"
+    ],
+    "explanation": "Đáp án đề xuất: B. Prompt injection khai thác chỉ dẫn đầu vào/ngữ cảnh; jailbreaking tìm cách vượt cơ chế từ chối. Hai khái niệm liên quan nhưng không đồng nhất."
+  },
+  "middle_test-030": {
+    "correctAnswers": [
+      "A",
+      "C",
+      "E"
+    ],
+    "explanation": "Đáp án đề xuất: A,C,E. RAG phù hợp khi cần truy xuất kiến thức lớn hoặc thường xuyên cập nhật. Fine-tuning phù hợp hơn để điều chỉnh phong cách hay hành vi model."
+  },
+  "middle_test-031": {
+    "correctAnswers": [
+      "A",
+      "B",
+      "D",
+      "E"
+    ],
+    "explanation": "Đáp án đề xuất: A,B,D,E. Validation, lọc PII, phê duyệt hành động rủi ro cao và rate limit đều là guardrail; tăng temperature không phải biện pháp bảo vệ."
+  },
+  "middle_test-032": {
+    "correctAnswers": [
+      "B"
+    ],
+    "explanation": "Đáp án đề xuất: B. Schema thiếu khai báo parameters nên model không biết cấu trúc đối số cần truyền; temperature không bổ sung schema."
+  },
+  "middle_test-033": {
+    "correctAnswers": [
+      "B"
+    ],
+    "explanation": "Đáp án đề xuất: B. BLEU đo độ trùng từ vựng với đáp án tham chiếu, không đo trực tiếp mức hoàn thành tác vụ hay hài lòng người dùng."
+  },
+  "middle_test-037": {
+    "correctAnswers": [
+      "C"
+    ],
+    "explanation": "Đáp án đề xuất: C. EU AI Act thường phân hệ thống thành bốn nhóm rủi ro: tối thiểu/không đáng kể, hạn chế, cao và không chấp nhận được."
+  },
+  "middle_test-038": {
+    "correctAnswers": [
+      "B"
+    ],
+    "explanation": "Đáp án đề xuất: B. Theo nội dung câu hỏi, hệ thống rủi ro cao cần đánh giá rủi ro, lưu vết, minh bạch và giám sát của con người. Đây là đáp án đề xuất theo bộ slide."
+  },
+  "middle_test-039": {
+    "correctAnswers": [
+      "B"
+    ],
+    "explanation": "Đáp án đề xuất: B. Giả định ẩn không được kiểm chứng có thể khiến nhóm xây sai cho thị trường hoặc phân khúc khách hàng."
+  },
+  "middle_test-040": {
+    "correctAnswers": [
+      "B"
+    ],
+    "explanation": "Đáp án đề xuất: B. Roadmap AI cần cột mốc dữ liệu và ngưỡng đánh giá chất lượng bên cạnh tiến độ tính năng."
+  },
+  "middle_test-041": {
+    "correctAnswers": [
+      "B"
+    ],
+    "explanation": "Đáp án đề xuất: B. Cần đo chi phí/thời gian hiện tại làm baseline để tính phần chênh lệch do AI tạo ra."
+  },
+  "middle_test-042": {
+    "correctAnswers": [
+      "B"
+    ],
+    "explanation": "Đáp án đề xuất: B. Áp dụng AI cần thay đổi quy trình, đào tạo, niềm tin và tích hợp; các yếu tố này thường mất thời gian."
+  },
+  "middle_test-043": {
+    "correctAnswers": [
+      "B"
+    ],
+    "explanation": "Đáp án đề xuất: B. C-suite cần hiểu kết quả kinh doanh, con số và thời gian đạt kết quả trước chi tiết kỹ thuật."
+  },
+  "middle_test-044": {
+    "correctAnswers": [
+      "B"
+    ],
+    "explanation": "Đáp án đề xuất: B. Ngoài quy mô, cần đánh giá thời điểm thị trường, lợi thế cạnh tranh, rào cản áp dụng và quy định."
+  },
+  "middle_test-045": {
+    "correctAnswers": [
+      "A",
+      "B",
+      "D",
+      "E"
+    ],
+    "explanation": "Đáp án đề xuất: A,B,D,E. Các tình huống này cần xử lý song song, giảm tải context hoặc chuyên môn hóa vai trò; đổi model vì tốc độ không phải lý do dùng multi-agent."
+  },
+  "middle_test-046": {
+    "correctAnswers": [
+      "A",
+      "C",
+      "D",
+      "E"
+    ],
+    "explanation": "Đáp án đề xuất: A,C,D,E. Prompt tốt nêu vai trò, định dạng, giới hạn và ví dụ phù hợp; CAPS LOCK không thay thế chỉ dẫn rõ ràng."
+  },
+  "middle_test-049": {
+    "correctAnswers": [
+      "B"
+    ],
+    "explanation": "Đáp án đề xuất: B. Nguồn bị kích hoạt chủ yếu khi có vấn đề tạo selection bias, nên mẫu sentiment không đại diện toàn bộ khách hàng."
+  },
+  "middle_test-053": {
+    "correctAnswers": [
+      "B"
+    ],
+    "explanation": "Đáp án đề xuất: B. Model extraction, poisoning, adversarial input và model supply chain là các rủi ro đặc thù AI."
+  },
+  "middle_test-054": {
+    "correctAnswers": [
+      "B"
+    ],
+    "explanation": "Đáp án đề xuất: B. Dùng spot cho tải batch chịu gián đoạn, reserved cho inference ổn định và autoscaling để giảm GPU nhàn rỗi."
+  },
+  "middle_test-055": {
+    "correctAnswers": [
+      "B"
+    ],
+    "explanation": "Đáp án đề xuất: B. Data observability theo dõi freshness, completeness, schema và sức khỏe pipeline, ngoài tình trạng hạ tầng ứng dụng."
+  },
+  "middle_test-056": {
+    "correctAnswers": [
+      "B"
+    ],
+    "explanation": "Đáp án đề xuất: B. Lakehouse kết hợp lưu trữ linh hoạt, chi phí thấp của lake với giao dịch, schema và phân tích của warehouse."
+  },
+  "middle_test-057": {
+    "correctAnswers": [
+      "B"
+    ],
+    "explanation": "Đáp án đề xuất: B. Quantization giảm bộ nhớ/tăng throughput nhưng thường đánh đổi một phần chất lượng; mức chấp nhận tùy tác vụ."
+  },
+  "middle_test-058": {
+    "correctAnswers": [
+      "B"
+    ],
+    "explanation": "Đáp án đề xuất: B. VRAM cần đủ cho weights và KV cache của các request đồng thời; đây thường là giới hạn chính khi chọn GPU inference."
+  },
+  "middle_test-059": {
+    "correctAnswers": [
+      "B"
+    ],
+    "explanation": "Đáp án đề xuất: B. Eval gate chạy đánh giá tự động sau thay đổi và chỉ cho deploy khi đạt ngưỡng chất lượng đã định."
+  },
+  "middle_test-060": {
+    "correctAnswers": [
+      "B"
+    ],
+    "explanation": "Đáp án đề xuất: B. Batching, KV cache, speculative decoding và quantization là các cách giảm độ trễ/chi phí phục vụ; hiệu quả tùy tải."
+  },
+  "middle_test-061": {
+    "correctAnswers": [
+      "A",
+      "C",
+      "E"
+    ],
+    "explanation": "Đáp án đề xuất: A,C,E. Tài liệu thay đổi thường xuyên, kho kiến thức lớn và giá realtime phù hợp truy xuất bằng RAG."
+  },
+  "middle_test-062": {
+    "correctAnswers": [
+      "A",
+      "B",
+      "C",
+      "D"
+    ],
+    "explanation": "Đáp án đề xuất: A,B,C,D. Latency, token cost, lỗi tool/parse và tỷ lệ hoàn thành tác vụ đều phản ánh vận hành agent. OCR ghép nhầm một distractor vào phương án B; cần rà soát lại ảnh nguồn nếu dùng đáp án chính thức."
+  },
+  "middle_test-065": {
+    "correctAnswers": [
+      "B"
+    ],
+    "explanation": "Đáp án đề xuất: B. Chunk quá lớn trộn nhiều section làm loãng tín hiệu; chunk nhỏ theo section và metadata giúp truy xuất đúng mục 4.3.2."
+  },
+  "middle_test-069": {
+    "correctAnswers": [
+      "B"
+    ],
+    "explanation": "Đáp án đề xuất: B. Refinement lặp, planning có backtracking hoặc tìm nhiều hướng cần pattern điều phối nâng cao hơn vòng ReAct đơn giản."
+  },
+  "middle_test-070": {
+    "correctAnswers": [
+      "A"
+    ],
+    "explanation": "Đáp án đề xuất: A. Dữ liệu production có noise, không nhất quán và edge case mà demo sạch thường không thể hiện."
+  },
+  "middle_test-071": {
+    "correctAnswers": [
+      "B"
+    ],
+    "explanation": "Đáp án đề xuất: B. Reflexion bổ sung tự đánh giá và dùng phản hồi để sửa kết quả ở vòng tiếp theo."
+  },
+  "middle_test-072": {
+    "correctAnswers": [
+      "B"
+    ],
+    "explanation": "Đáp án đề xuất: B. Context engineering chọn, nén và truy xuất ký ức phù hợp trong giới hạn context window."
+  },
+  "middle_test-073": {
+    "correctAnswers": [
+      "B"
+    ],
+    "explanation": "Đáp án đề xuất: B. Faithfulness đo mức các khẳng định trong câu trả lời được hỗ trợ bởi context truy xuất."
+  },
+  "middle_test-074": {
+    "correctAnswers": [
+      "B"
+    ],
+    "explanation": "Đáp án đề xuất: B. PreRAG cải thiện truy vấn trước retrieval bằng expansion, rewriting, HyDE và routing theo intent."
+  },
+  "middle_test-075": {
+    "correctAnswers": [
+      "B"
+    ],
+    "explanation": "Đáp án đề xuất: B. Đây là năm workflow pattern được nêu trong tài liệu: chaining, routing, parallelization, orchestrator-subagents và evaluator-optimizer."
+  },
+  "middle_test-076": {
+    "correctAnswers": [
+      "B"
+    ],
+    "explanation": "Đáp án đề xuất: B. LoRA giữ nguyên weights nền và huấn luyện các ma trận adapter hạng thấp bổ sung."
+  },
+  "middle_test-077": {
+    "correctAnswers": [
+      "A",
+      "B",
+      "D",
+      "E"
+    ],
+    "explanation": "Đáp án đề xuất: A,B,D,E. Song song hóa, context thường xuyên đầy và vai trò chuyên biệt có thể biện minh cho multi-agent; đổi model để tăng tốc thì không."
+  },
+  "middle_test-078": {
+    "correctAnswers": [
+      "A",
+      "C",
+      "D",
+      "E"
+    ],
+    "explanation": "Đáp án đề xuất: A,C,D,E. Nêu vai trò, output contract, giới hạn và ví dụ khi cần; viết CAPS LOCK không phải best practice bắt buộc."
+  },
+  "middle_test-082": {
+    "correctAnswers": [
+      "B"
+    ],
+    "explanation": "Đáp án đề xuất: B. Tool schema cần khai báo parameters để model biết phải gửi đối số nào; tăng temperature không khắc phục thiếu schema."
+  },
+  "middle_test-018": {
+    "correctAnswers": null,
+    "explanation": "Đáp án: Observation. Trong vòng ReAct, Thought → Action → Observation; Observation là kết quả tool được đưa lại vào context."
+  },
+  "middle_test-019": {
+    "correctAnswers": null,
+    "explanation": "Đáp án theo mô tả: [1] temperature; [2] max_tokens (tên trường có thể khác theo API); [3] top_p. Temperature điều chỉnh độ ngẫu nhiên, max_tokens giới hạn độ dài, top_p đặt ngưỡng nucleus sampling."
+  },
+  "middle_test-020": {
+    "correctAnswers": null,
+    "explanation": "Đáp án: Thought. ReAct lặp Thought → Action → Observation; Thought là bước suy luận/chọn hành động trước khi gọi tool."
+  },
+  "middle_test-021": {
+    "correctAnswers": null,
+    "explanation": "Đáp án: Action. Đây là bước agent gọi tool hoặc thực hiện hành động đã chọn."
+  },
+  "middle_test-022": {
+    "correctAnswers": null,
+    "explanation": "Đáp án: [2] max_tokens (một số API dùng tên trường tương đương như max_completion_tokens). Tham số này giới hạn số token đầu ra."
+  },
+  "middle_test-023": {
+    "correctAnswers": null,
+    "explanation": "Đáp án theo mô tả: [1] temperature, [2] max_tokens, [3] top_p."
+  },
+  "middle_test-024": {
+    "correctAnswers": null,
+    "explanation": "Đáp án: cosine similarity (độ tương đồng cosine), phép đo góc giữa hai vector."
+  },
+  "middle_test-025": {
+    "correctAnswers": null,
+    "explanation": "Đáp án: [1] embedding; [2] cosine similarity; [3] top-k — lấy k tài liệu có điểm phù hợp cao nhất."
+  },
+  "middle_test-026": {
+    "correctAnswers": null,
+    "explanation": "Đáp án: [1] embedding; [2] cosine similarity; [3] top-k."
+  },
+  "middle_test-027": {
+    "correctAnswers": null,
+    "explanation": "Đáp án ghép: A1→B4, A2→B5, A3→B2, A4→B3, A5→B1."
+  },
+  "middle_test-028": {
+    "correctAnswers": null,
+    "explanation": "Thứ tự đề xuất: C (Problem Scoping) → G (Data Strategy) → B (Build & Prototype) → D (Test & Evaluate) → E (Deploy) → A (Monitor) → F (Iterate). Data Strategy là mục không có ký hiệu trong đề, được gán G để ghi thứ tự."
+  },
+  "middle_test-029": {
+    "correctAnswers": null,
+    "explanation": "Thứ tự: B (Load) → E (Clean/preprocess) → A (Chunk) → C (Embed) → D (lưu vào vector database)."
+  },
+  "middle_test-034": {
+    "correctAnswers": null,
+    "explanation": "Gợi ý: Ở bước generation, chỉ cho phép trả lời dựa trên context có nguồn và ngày hiệu lực; yêu cầu trích dẫn tài liệu/ngày áp dụng. Nếu nguồn mâu thuẫn hoặc không có nguồn hiện hành thì nêu thiếu căn cứ/đưa người phụ trách duyệt, không tự chọn con số."
+  },
+  "middle_test-035": {
+    "correctAnswers": null,
+    "explanation": "Đáp án: Indexing. Cả bản cũ và mới đều được index nhưng metadata không có effective_date nên hệ thống không phân biệt phiên bản còn hiệu lực; nguyên nhân gốc phát sinh từ quản lý/index tài liệu."
+  },
+  "middle_test-036": {
+    "correctAnswers": null,
+    "explanation": "Hai thay đổi: (1) lưu effective_date/version/status và document_id trong metadata, rồi lọc chỉ phiên bản hiệu lực; (2) khi có bản mới, vô hiệu hóa/xóa vectors của bản cũ và kiểm tra đồng bộ index để tránh dữ liệu stale."
+  },
+  "middle_test-047": {
+    "correctAnswers": null,
+    "explanation": "Output contract là quy định cấu trúc và kiểu dữ liệu đầu ra (ví dụ JSON schema với trường bắt buộc, enum và giới hạn). Nó giúp downstream parse ổn định, giảm lỗi format và cho phép kiểm tra/đánh giá tự động."
+  },
+  "middle_test-048": {
+    "correctAnswers": null,
+    "explanation": "Thiết kế: Supervisor nhận feedback, giao worker sentiment để phân loại, worker topic để trích chủ đề và worker summary để tổng hợp. Supervisor kiểm tra kết quả/định dạng, ghép thành báo cáo; các worker độc lập có thể chạy song song và cần báo nguồn/số lượng mẫu."
+  },
+  "middle_test-050": {
+    "correctAnswers": null,
+    "explanation": "Tính theo giả định đề bài: 60% ticket tự động tiết kiệm 6 phút; 40% còn lại giảm 3 phút → giảm 4,8 phút/ticket, tương đương 80% workload. Nếu quy đổi tỷ lệ này vào quỹ lương 96 triệu/tháng, năng lực tiết kiệm ước tính 76,8 triệu/tháng. Năm đầu: lợi ích 921,6 triệu − vận hành 180 triệu − build 200 triệu = 541,6 triệu; ROI trên tổng chi phí năm đầu 380 triệu ≈ 142,5%. Đây là ước tính theo workload, không phải tiền mặt nếu vẫn giữ nguyên nhân sự; dữ liệu 1.200 ticket/ngày × 6 phút cũng cần đối chiếu với công suất 8 người."
+  },
+  "middle_test-051": {
+    "correctAnswers": null,
+    "explanation": "Giảm thời gian: 1.200 × (60%×6 + 40%×3) = 5.760 phút/ngày = 96 giờ/ngày. Trong 22 ngày làm việc là 2.112 giờ/tháng, tương đương khoảng 80% tổng thời gian xử lý hiện tại. Nếu quy đổi tỷ lệ workload vào quỹ lương 8×12 = 96 triệu/tháng, giá trị tiết kiệm lý thuyết là 76,8 triệu/tháng; chi phí vận hành 15 triệu nên còn 61,8 triệu/tháng trước các chi phí khác. Không thể coi toàn bộ là giảm chi tiền nếu giữ nguyên 8 nhân viên."
+  },
+  "middle_test-052": {
+    "correctAnswers": null,
+    "explanation": "Ví dụ hai khoản chưa tính: chi phí tích hợp/duy trì (API, hạ tầng, cập nhật dữ liệu và nhân sự giám sát); chi phí/rủi ro do câu trả lời sai (bồi hoàn, xử lý escalations, kiểm duyệt và ảnh hưởng uy tín). Có thể nêu thêm bảo mật/quyền riêng tư và thay đổi quy trình/đào tạo."
+  },
+  "middle_test-063": {
+    "correctAnswers": null,
+    "explanation": "Chunk mẫu: “Chính sách hoàn tiền áp dụng trong 30 ngày kể từ ngày mua; sản phẩm phải chưa qua sử dụng và còn nguyên tem.” Metadata nên có document_id, tên chính sách/phiên bản, section, trang, effective_date, ngày cập nhật, loại sản phẩm/phạm vi áp dụng, nguồn và quyền truy cập. Giữ điều kiện và thời hạn trong cùng chunk để không mất ngữ cảnh."
+  },
+  "middle_test-064": {
+    "correctAnswers": null,
+    "explanation": "P99 cho biết độ trễ mà 99% request không vượt quá, nên bộc lộ nhóm request chậm nhất và trải nghiệm đuôi. Average có thể che các lần treo/timeout hiếm nhưng nghiêm trọng."
+  },
+  "middle_test-066": {
+    "correctAnswers": null,
+    "explanation": "Ba nguyên nhân: model mới có latency cao hơn; token/giá hoặc độ dài output làm chi phí tăng; hành vi/format thay đổi gây hỏng template. Thiếu eval pipeline khiến regression về chất lượng, latency, cost và schema không bị phát hiện trước deploy."
+  },
+  "middle_test-067": {
+    "correctAnswers": null,
+    "explanation": "Pipeline đề xuất: khóa phiên bản model/prompt; chạy unit và regression eval trên golden set; kiểm tra schema, quality, safety, latency và cost gates; staging/shadow; canary theo tỷ lệ nhỏ; theo dõi và rollback tự động nếu vượt ngưỡng. Chỉ mở rộng sau khi đạt tiêu chí."
+  },
+  "middle_test-068": {
+    "correctAnswers": null,
+    "explanation": "Chỉ chấp nhận nếu lợi ích tăng thêm đo được vượt chi phí tăng thêm và đạt ngưỡng ROI/payback đã thống nhất. So sánh cost/request và tổng chi phí với task completion/chất lượng, latency, rủi ro và mức sẵn lòng chi trả; chạy thử nghiệm trên traffic đại diện, giới hạn ngân sách và rollback nếu không đạt."
+  },
+  "middle_test-079": {
+    "correctAnswers": null,
+    "explanation": "Thought: cần tỷ giá mới nhất, không thể suy ra từ kiến thức cũ. Action: gọi get_exchange_rate(base=\"USD\", quote=\"VND\"). Observation: đưa kết quả cùng timestamp/nguồn của tool vào context. Sau đó trả tỷ giá và thời điểm truy vấn; nếu tool lỗi thì nói không lấy được dữ liệu hiện tại."
+  },
+  "middle_test-080": {
+    "correctAnswers": null,
+    "explanation": "Gợi ý system prompt: “Bạn là trợ lý CS của cửa hàng thương mại điện tử. Trả lời bằng tiếng Việt, lịch sự, ngắn gọn; chỉ dùng chính sách/đơn hàng trong dữ liệu được cung cấp. Nếu thiếu thông tin, hỏi mã đơn hoặc chuyển nhân viên; không bịa trạng thái, giá hay cam kết. Trả JSON gồm {answer, order_id, needs_human, cited_sources}. Không tiết lộ dữ liệu khách khác. Trước khi hủy/hoàn tiền, yêu cầu xác nhận và chuyển người có thẩm quyền.”"
+  },
+  "middle_test-081": {
+    "correctAnswers": null,
+    "explanation": "Hai lỗi: gọi model một lần rồi trả luôn nên không thực hiện Action/Observation; không dispatch tool call theo schema và không đưa kết quả tool về messages cho vòng tiếp theo. Pseudocode: khởi tạo system/user messages; lặp với giới hạn số bước: gọi model với tool schemas; nếu final thì trả lời; nếu có tool call thì validate tên/args, thực thi tool, append tool call và kết quả vào messages; tiếp tục. Nếu lỗi/đạt giới hạn thì trả fallback an toàn."
+  },
+  "middle_test-083": {
+    "correctAnswers": null,
+    "explanation": "Chọn 20 câu phân tầng theo intent (điều kiện, thời hạn, ngoại lệ, quy trình), độ khó, sản phẩm và nhóm câu phổ biến/ít gặp; giữ lại câu edge case và câu dễ nhầm. Mỗi row gồm query, câu trả lời chuẩn, đoạn tài liệu và citation kỳ vọng, intent/nhãn, mức rủi ro, phiên bản nguồn; chia tập đánh giá cố định, tránh dùng để chỉnh prompt rồi báo điểm trên chính tập đó."
+  },
+  "middle_test-084": {
+    "correctAnswers": null,
+    "explanation": "Bốn metric: Faithfulness — câu trả lời có được context hỗ trợ; Answer Relevancy — có trả đúng trọng tâm câu hỏi bảo hành; Context Precision — các đoạn được truy xuất có liên quan, hạn chế nhiễu; Context Recall — có lấy đủ điều khoản cần để trả lời. GPT-4 judge cần rubric rõ và lấy mẫu con người kiểm tra."
+  },
+  "middle_test-085": {
+    "correctAnswers": null,
+    "explanation": "Faithfulness 0,95 nghĩa là phần lớn khẳng định sinh ra có căn cứ trong context đã lấy. Context Recall 0,60 nghĩa là retrieval thường bỏ sót thông tin cần thiết, dù câu trả lời dựa trên phần đã có. Ưu tiên sửa ingestion/indexing, chunk theo điều khoản, metadata và query/retrieval/reranking; kiểm tra lại trên golden set."
+  }
+}

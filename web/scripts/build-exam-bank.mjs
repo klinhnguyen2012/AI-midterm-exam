@@ -8,7 +8,32 @@ const webRoot = resolve(scriptDir, '..');
 const sourceRoot = resolve(repoRoot, 'AI_Thuc_Chien_K4_Midterm');
 const inputPath = resolve(sourceRoot, '05_data/exam_bank_seed.json');
 const outputPath = resolve(webRoot, 'src/data/exam_bank_seed.json');
+const exam01ProposalsPath = resolve(webRoot, 'content/exam01-answer-proposals.json');
 const generatedAt = '2026-10-20T00:00:00.000Z';
+
+function applyExam01Proposals(questions, examSets) {
+  const exam01 = examSets.find(set => set.id === 'exam-01');
+  if (!exam01) return questions;
+  const proposals = JSON.parse(readFileSync(exam01ProposalsPath, 'utf8'));
+  const proposedIds = new Set(Object.keys(proposals));
+  for (const id of exam01.questionIds) {
+    const proposal = proposals[id];
+    if (!proposal) throw new Error(`Thiếu đáp án đề xuất cho ${id}.`);
+    const question = questions.find(item => item.id === id);
+    if (!question) throw new Error(`Không tìm thấy câu hỏi ${id} của Đề 01.`);
+    if (proposal.correctAnswers?.some(answer => !question.options.some(option => option.id === answer))) {
+      throw new Error(`Đáp án đề xuất của ${id} không khớp phương án.`);
+    }
+    question.correctAnswers = proposal.correctAnswers ?? null;
+    question.explanation = proposal.explanation;
+    question.verificationStatus = 'answer_proposed';
+    question.reviewerNotes = 'Đáp án/gợi ý do hệ thống đề xuất từ nội dung câu hỏi và kiến thức trong học liệu. Chưa phải đáp án chính thức; cần đối chiếu với giảng viên.';
+  }
+  if (proposedIds.size !== exam01.questionIds.length || [...proposedIds].some(id => !exam01.questionIds.includes(id))) {
+    throw new Error('Tập đáp án đề xuất không khớp với Đề 01.');
+  }
+  return questions;
+}
 
 export function normalize(text) {
   return text.normalize('NFKD').replace(/\p{Diacritic}/gu, '').replaceAll('đ', 'd').replaceAll('Đ', 'd')
@@ -210,6 +235,7 @@ function isCandidate(text) {
 
 function run() {
   const bank = JSON.parse(readFileSync(inputPath, 'utf8'));
+  applyExam01Proposals(bank.questions, bank.examSets);
   const chunkPath = resolve(sourceRoot, '05_data/knowledge_chunks.jsonl');
   const chunks = readFileSync(chunkPath, 'utf8').trim().split(/\r?\n/).map(line => JSON.parse(line));
   const cheatSheet = readFileSync(resolve(sourceRoot, '06_cheat_sheet/CHEAT_SHEET_TONG_HOP.md'), 'utf8');

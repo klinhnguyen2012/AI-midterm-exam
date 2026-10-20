@@ -70,13 +70,16 @@ describe('provided exam bank', () => {
     expect(second).toMatchObject({ total: 85, mcqCount: 60, essayCount: 25 });
   });
 
-  it('keeps old-exam answers unset and links every transcription to its image', () => {
+  it('provides proposed answers or response guidance for every question in Exam 01', () => {
     const first = examSets.find(set => set.id === 'exam-01')!;
     const byId = new Map(examQuestions.map(question => [question.id, question]));
     expect(first.questionIds.every(id => byId.has(id))).toBe(true);
     for (const id of first.questionIds) {
       const question = byId.get(id)!;
-      expect(question.correctAnswers).toBeNull();
+      expect(question.verificationStatus).toBe('answer_proposed');
+      expect(question.explanation.trim().length).toBeGreaterThan(0);
+      if (question.type === 'essay') expect(question.correctAnswers).toBeNull();
+      else if (question.correctAnswers === null) expect(question.explanation).toMatch(/câu hỏi cá nhân hóa/i);
       expect(question.sourceFiles[0]).toMatch(/02_past_exam_images\/middle_test\//);
     }
   });

@@ -29,3 +29,16 @@
 @media(max-width:760px){.source-stats.check-sheet-stats{grid-template-columns:repeat(3,minmax(0,1fr))}}
 
 .lesson-summary-item{display:grid;gap:0}.lesson-item{width:100%;text-align:left;color:var(--text);font:inherit;cursor:pointer}.lesson-item .source-open{white-space:nowrap}.local-summary-panel{margin:0 0 10px;padding:12px 16px 12px 52px;border:1px solid var(--line);border-top:0;border-radius:0 0 8px 8px;background:var(--surface);color:var(--text);font-size:13px;line-height:1.55}.local-summary-panel>strong{display:block;margin-bottom:6px;color:var(--teal)}.local-summary-panel p{margin:0;color:var(--muted)}.local-summary-panel ul{margin:0;padding-left:17px}.local-summary-panel li+li{margin-top:4px}.local-summary-wrap{display:grid;gap:8px}.local-summary-wrap .local-summary-panel{padding:10px 12px;margin:0}.check-sheet-answer>a{display:none}
+.check-sheet-day{border-color:var(--line);background:var(--surface)}
+.study-guide-panel{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding:14px 15px;background:var(--surface-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.study-guide-panel>div,.learning-block{padding:12px 14px;border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--text)}
+.study-guide-panel small{display:block;margin-bottom:6px;color:var(--teal);font-size:11px;font-weight:800;letter-spacing:.06em}
+.study-guide-panel p,.learning-block p{margin:0;color:var(--text);font-size:13px;line-height:1.65}
+.study-guide-panel .remember-note,.learning-block.remember-block{background:var(--teal-light);border-color:color-mix(in srgb,var(--teal) 28%,var(--line))}
+.check-sheet-answer{color:var(--text)}
+.check-sheet-answer .markdown-lite{color:var(--text)}
+.check-sheet-answer .markdown-lite p,.check-sheet-answer .markdown-lite li{color:var(--text)}
+.learning-block{margin:0 0 9px}
+.learning-block>strong{display:block;margin-bottom:6px;color:var(--teal);font-size:13px}
+.learning-source{display:block;padding:2px 2px 0;color:var(--muted);font-size:12px}
+@media(max-width:760px){.study-guide-panel{grid-template-columns:1fr;padding:10px}}

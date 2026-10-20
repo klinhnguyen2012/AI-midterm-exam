@@ -147,7 +147,10 @@ function shuffledFacts(facts, random) {
 }
 
 function distractorsFor(facts, answerFact, count, offset) {
-  const candidates = facts.filter(fact => fact.id !== answerFact.id && fact.topic !== answerFact.topic);
+  const sameTopic = facts.filter(fact => fact.id !== answerFact.id && fact.topic === answerFact.topic);
+  const day = String(answerFact.topic).match(/(?:study\s+)?day\s*0?(\d{1,2})/i)?.[1];
+  const sameDay = day ? facts.filter(fact => fact.id !== answerFact.id && fact.topic !== answerFact.topic && String(fact.topic).match(/(?:study\s+)?day\s*0?(\d{1,2})/i)?.[1] === day) : [];
+  const candidates = sameTopic.length >= count ? sameTopic : sameDay.length >= count ? sameDay : facts.filter(fact => fact.id !== answerFact.id);
   if (candidates.length < count) throw new Error(`Không đủ phương án nhiễu theo chủ đề khác cho nguồn ${answerFact.id}.`);
   const start = offset % (candidates.length - count + 1);
   return candidates.slice(start, start + count);
@@ -156,7 +159,7 @@ function distractorsFor(facts, answerFact, count, offset) {
 function questionBase(id, fact, stem, options, type, correctAnswers, explanation) {
   return {
     id, stem, type, options, correctAnswers, explanation, topic: fact.topic, day: null, difficulty: 'medium',
-    sourceFiles: [fact.sourceFile], sourcePages: [], evidenceQuote: fact.text, sourceLabel: fact.topic,
+    sourceFiles: [fact.sourceFile], sourcePages: Number.isInteger(fact.page) ? [fact.page] : [], evidenceQuote: fact.text, sourceLabel: fact.topic,
     verificationStatus: type === 'essay' ? 'transcribed' : 'answer_proposed',
     reviewerNotes: 'Câu biến thể được tạo từ trích đoạn nguồn cục bộ. Đáp án MCQ là đề xuất; cần rà soát trước khi xem là đáp án chính thức.',
     sourceType: 'generated_variant', rawOcrText: '', createdAt: generatedAt, updatedAt: generatedAt,
@@ -198,28 +201,26 @@ export function buildAdditionalExams({ existingQuestions, existingSets, facts, o
       const id = `generated-mcq-${String(mcqSerial++).padStart(4, '0')}`;
       let question;
       if (index % 2 === 0) {
-        const prompts = [
-          'Đoạn trích sau thuộc chủ đề học nào?',
-          'Trong giáo trình, nội dung này được xếp vào chủ đề nào?',
-          'Chọn chủ đề gắn với trích đoạn sau:',
-          'Ý trong trích đoạn được học ở phần nào?',
-        ];
-        const choices = shuffle([fact.topic, ...shuffle(allTopics.filter(topic => topic !== fact.topic), random).slice(0, 3)], random);
-        const answerIndex = choices.indexOf(fact.topic);
-        question = questionBase(id, fact,
-          `${prompts[(mcqSerial + index) % prompts.length]}\n\n“${fact.text}”`,
-          choices.map((choice, choiceIndex) => ({ id: String.fromCharCode(65 + choiceIndex), text: choice })),
-          'single_choice', [String.fromCharCode(65 + answerIndex)],
-          `Đáp án đề xuất: đoạn trích gắn với chủ đề “${fact.topic}” trong nguồn. Cần người rà soát xác nhận phân loại.`);
-      } else {
+        const concept = fact.text.match(/^\*\*([^*]{2,70}):\*\*/)?.[1];
         const words = fact.text.split(/\s+/);
-        const opening = words.slice(0, 5).join(' ');
-        const ending = words.slice(-4).join(' ');
+        const excerpt = `${words.slice(0, 5).join(' ')} … ${words.slice(-4).join(' ')}`;
+        const prompt = concept ? `Phát biểu nào mô tả đúng “${concept.trim()}”?` : `Chọn phát biểu hoàn chỉnh đúng với ghi chú trong slide: “${excerpt}”`;
         const distractors = distractorsFor(ordered, fact, 3, cursor + index * 17);
         const choices = shuffle([fact, ...distractors], random);
         const answerIndex = choices.findIndex(choice => choice.id === fact.id);
         question = questionBase(id, fact,
-          `Chọn phần tiếp nối đúng của ghi chú “${opening} … ${ending}”.`,
+          prompt,
+          choices.map((choice, choiceIndex) => ({ id: String.fromCharCode(65 + choiceIndex), text: choice.text })),
+          'single_choice', [String.fromCharCode(65 + answerIndex)],
+          `Đáp án đề xuất dựa trên nội dung slide: “${fact.text}”. Cần người rà soát xác nhận.`);
+      } else {
+        const distractors = distractorsFor(ordered, fact, 3, cursor + index * 17);
+        const choices = shuffle([fact, ...distractors], random);
+        const answerIndex = choices.findIndex(choice => choice.id === fact.id);
+        const words = fact.text.split(/\s+/);
+        const excerpt = `${words.slice(0, 5).join(' ')} … ${words.slice(-4).join(' ')}`;
+        question = questionBase(id, fact,
+          `Chọn phát biểu hoàn chỉnh đúng với ghi chú trong slide: “${excerpt}”`,
           choices.map((choice, choiceIndex) => ({ id: String.fromCharCode(65 + choiceIndex), text: choice.text })),
           'single_choice', [String.fromCharCode(65 + answerIndex)],
           'Đáp án đề xuất khớp với trích đoạn nguồn. Các phương án còn lại được lấy từ chủ đề khác; cần người rà soát xác nhận.');
@@ -274,7 +275,7 @@ export function extractSourceFacts(chunks, cheatSheet) {
     const sourceFile = relativeSource;
     for (const line of chunk.text.split(/\n+/)) {
       const text = line.replace(/^\s*[•●▪◦*-]+\s*/, '').replace(/\s+/g, ' ').trim();
-      if (isCandidate(text)) candidates.push({ id: `${chunk.id}:${normalize(text).slice(0, 24)}`, topic: chunk.topic_hint, sourceFile, text });
+      if (isCandidate(text)) candidates.push({ id: `${chunk.id}:${normalize(text).slice(0, 24)}`, topic: chunk.topic_hint, sourceFile, page: chunk.page, text });
     }
   }
   let topic = 'Cheat sheet';
@@ -297,8 +298,12 @@ export function extractSourceFacts(chunks, cheatSheet) {
 function isCandidate(text) {
   const words = text.split(/\s+/);
   const letters = (text.match(/[A-Za-zÀ-ỹ]/g) ?? []).length;
+  const metadataOrInstructions = /\b(instructor|lecturer|chapter lead|developer expert|ai in action|agenda|homework|q\s*&\s*a|nghỉ giải lao|quét mã qr|discord|slido|terminal|template\.py|requirements\.txt|pip install|github|email|link bên dưới|liên hệ hỗ trợ|trả lời các câu hỏi|chạy thành công|mở transformer|thử trực tiếp|sáng nay|chiều nay|học viên|giảng viên|hẹn gặp|cảm ơn|đăng ký kênh|subscribe|video tiếp theo|các bạn|mọi người|nhóm\s*\d|thực hành|cài đặt|option [a-d]:|supports dual-import|maintains the last|call .*api|you must strictly|operational boundaries|nộp trước buổi|handbook|tóm tắt q\d|q\d:|nguồn:|source:|mẹo:)\b|\bday\s*0?\d+\s+\d+\s*\/\s*\d+|\[[^\]]*(?:tên|name|giảng viên|instructor)[^\]]*\]|https?:|www\.|@|\b\d{1,2}:\d{2}\b|\b20\d{2}\b|\.(?:py|ipynb)\b|[■□☐�]/i.test(text);
+  const endsMidThought = /\b(?:và|hoặc|của|với|trong|theo|như|để|từ|một|các|là|thì|khi|nếu|and|or|of|with|for|to|the|a|an|in|on|by|from|as|at|into|but|which|that|including)\s*[.,;:…]*$/i.test(text);
+  const malformed = /[?…]$|\b\w{26,}\b|(?:^|\s)#\s*(?:option|measure|todo)\b/i.test(text);
   return text.length >= 52 && text.length <= 180 && words.length >= 8 && letters / text.length > 0.48 &&
-    !/(https?:|www\.|@|\b\d{1,2}:\d{2}\b|\b20\d{2}\b|email|password|discord\.gg|slido)/i.test(text);
+    !metadataOrInstructions && !endsMidThought && !malformed &&
+    !/^[a-zà-ỹ]/.test(text) && /[.!:)”]$/.test(text);
 }
 
 function run() {

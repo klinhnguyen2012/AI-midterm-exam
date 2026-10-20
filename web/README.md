@@ -18,19 +18,19 @@ npm test
 
 ## Dataset included
 
-The Lite pack has 3 Notion Markdown exports, 184 past exam images, 65 slide metadata entries with extracted text, 4,481 knowledge chunks, one cheat sheet, and 10 assistant-authored mock questions. It does not include the original slide PDFs. The app shows extracted slide text and labels it as unverified extraction. The 184 images are still untranscribed and are not answer keys.
+The Lite pack has 3 Notion Markdown exports, 184 past exam images, 65 slide metadata entries with extracted text, 4,481 knowledge chunks, one cheat sheet, and 10 assistant-authored mock questions. It does not include the original slide PDFs. The app shows extracted slide text and labels it as unverified extraction. Past exam images stay in the local source folder and are never copied to the app's public files or production bundle.
 
 The ten seed items have proposed answers and explanations for mock practice. They are not expert verified or official exam questions. Mock scores are clearly labeled; only `expert_verified` answers count as verified results. Questions with no answer stay pending instead of counting as wrong.
 
 ## Local data folders
 
 - `../AI_Thuc_Chien_K4_Midterm/` is the extracted, user-supplied Lite dataset.
-- `public/dataset/` is a local copy served by Vite for source browsing. It is intentionally excluded from version control because it contains private source material.
+- `public/dataset/` contains only the text and manifests needed by the app. Past exam image files and their manifest are excluded.
 - `src/data/` has the seed bank and cheat sheet used by the app.
 
 No source document is sent to an API. The knowledge search fetches and searches the local JSONL only when the user opens that search tab.
 
-The production `dist/` output includes the local library files so the static app can browse them. Keep that output local; do not deploy or upload it, because it contains the supplied course exports and exam images.
+The production `dist/` output includes the text library files so the static app can browse them. Review course source usage before publishing the bundle.
 
 ## Question format
 

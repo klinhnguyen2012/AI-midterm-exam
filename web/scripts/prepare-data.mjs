@@ -13,11 +13,19 @@ if (!existsSync(source)) {
   process.exit(1);
 }
 mkdirSync(publicData, { recursive: true });
-for (const folder of ['01_notion_exports', '02_past_exam_images', '04_extracted_slide_text', '05_data']) {
+for (const folder of ['01_notion_exports', '04_extracted_slide_text']) {
   const from = resolve(source, folder);
   const to = resolve(publicData, folder);
   rmSync(to, { recursive: true, force: true });
   cpSync(from, to, { recursive: true });
+}
+// Exam screenshots are private source material: keep them out of the web root.
+rmSync(resolve(publicData, '02_past_exam_images'), { recursive: true, force: true });
+const publicManifestDir = resolve(publicData, '05_data');
+rmSync(publicManifestDir, { recursive: true, force: true });
+mkdirSync(publicManifestDir, { recursive: true });
+for (const name of ['slide_manifest.json', 'notion_manifest.json', 'knowledge_chunks.jsonl']) {
+  copyFileSync(resolve(source, '05_data', name), resolve(publicManifestDir, name));
 }
 mkdirSync(resolve(publicData, '06_cheat_sheet'), { recursive: true });
 copyFileSync(resolve(source, '06_cheat_sheet/CHEAT_SHEET_TONG_HOP.md'), resolve(publicData, '06_cheat_sheet/CHEAT_SHEET_TONG_HOP.md'));

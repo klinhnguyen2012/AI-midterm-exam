@@ -44,10 +44,15 @@ export function loadAttemptData(storage: Storage = localStorage): string {
 export function loadQuestions(questions: Question[]): Question[] {
   const seen = new Set<string>();
   return questions.filter(question => {
-    if (!question.id || seen.has(question.id)) return false;
+    if (!question.id || seen.has(question.id) || isTopicGuessQuestion(question.stem)) return false;
     seen.add(question.id);
     return true;
   });
+}
+
+function isTopicGuessQuestion(stem: string): boolean {
+  const normalized = stem.normalize('NFKD').replace(/\p{Diacritic}/gu, '').replaceAll('đ', 'd').toLowerCase();
+  return /(?:chon|choose|pick|select|identify|match)\s+(?:(?:the|mot)\s+)?(?:chu de|topic|theme)\b|(?:chu de nao|which topic|what topic)\b|(?:trich doan|doan trich|excerpt|passage).{0,50}(?:duoc xep|thuoc|gan voi|belongs to|classified as|mapped to).{0,30}(?:chu de|topic|theme)|noi dung nay.{0,40}(?:xep|thuoc).{0,30}(?:chu de|topic|theme)/i.test(normalized);
 }
 
 const statuses = new Set(['untranscribed', 'transcribed', 'answer_proposed', 'expert_verified']);

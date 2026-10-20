@@ -108,6 +108,24 @@ export function normalize(text) {
     .toLocaleLowerCase('vi').replace(/[^a-z0-9]+/g, ' ').trim().replace(/\s+/g, ' ');
 }
 
+function isTopicGuessQuestion(stem) {
+  const text = normalize(stem);
+  return /(?:chon|choose|pick|select|identify|match)\s+(?:(?:the|mot)\s+)?(?:chu de|topic|theme)\b|(?:chu de nao|which topic|what topic)\b|(?:trich doan|doan trich|excerpt|passage).{0,50}(?:duoc xep|thuoc|gan voi|belongs to|classified as|mapped to).{0,30}(?:chu de|topic|theme)|noi dung nay.{0,40}(?:xep|thuoc).{0,30}(?:chu de|topic|theme)/i.test(text);
+}
+
+function removeTopicGuessQuestions(bank) {
+  const removedIds = new Set(bank.questions.filter(question => isTopicGuessQuestion(question.stem)).map(question => question.id));
+  if (!removedIds.size) return 0;
+  bank.questions = bank.questions.filter(question => !removedIds.has(question.id));
+  const questionsById = new Map(bank.questions.map(question => [question.id, question]));
+  bank.examSets = bank.examSets.map(set => {
+    const questionIds = set.questionIds.filter(id => !removedIds.has(id));
+    const selected = questionIds.map(id => questionsById.get(id)).filter(Boolean);
+    return { ...set, questionIds, total: selected.length, mcqCount: selected.filter(question => question.type !== 'essay').length, essayCount: selected.filter(question => question.type === 'essay').length };
+  });
+  return removedIds.size;
+}
+
 function randomFor(seed) {
   let state = seed >>> 0;
   return () => {
@@ -309,6 +327,7 @@ function isCandidate(text) {
 function run() {
   const bank = JSON.parse(readFileSync(inputPath, 'utf8'));
   applyExam01Proposals(bank.questions, bank.examSets);
+  const removedTopicQuestions = removeTopicGuessQuestions(bank);
   const chunkPath = resolve(sourceRoot, '05_data/knowledge_chunks.jsonl');
   const chunks = readFileSync(chunkPath, 'utf8').trim().split(/\r?\n/).map(line => JSON.parse(line));
   const cheatSheet = readFileSync(resolve(sourceRoot, '06_cheat_sheet/CHEAT_SHEET_TONG_HOP.md'), 'utf8');
@@ -318,7 +337,7 @@ function run() {
   const generatedIds = new Set(built.examSets.slice(2).flatMap(set => set.questionIds));
   const output = { ...bank, questions: built.questions, examSets: built.examSets, generatedExamQuestionCount: generatedIds.size };
   writeFileSync(outputPath, `${JSON.stringify(output, null, 2)}\n`);
-  console.log(`Tạo ${built.examSets.length} đề, ${generatedIds.size} câu bổ sung từ ${facts.length} trích đoạn nguồn.`);
+  console.log(`Tạo ${built.examSets.length} đề, ${generatedIds.size} câu bổ sung từ ${facts.length} trích đoạn nguồn; đã loại ${removedTopicQuestions} câu đoán chủ đề.`);
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) run();

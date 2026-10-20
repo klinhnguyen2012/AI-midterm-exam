@@ -113,9 +113,17 @@ function isTopicGuessQuestion(stem) {
   return /(?:chon|choose|pick|select|identify|match)\s+(?:(?:the|mot)\s+)?(?:chu de|topic|theme)\b|(?:chu de nao|which topic|what topic)\b|(?:trich doan|doan trich|excerpt|passage).{0,50}(?:duoc xep|thuoc|gan voi|belongs to|classified as|mapped to).{0,30}(?:chu de|topic|theme)|noi dung nay.{0,40}(?:xep|thuoc).{0,30}(?:chu de|topic|theme)/i.test(text);
 }
 
-function removeTopicGuessQuestions(bank) {
-  const removedIds = new Set(bank.questions.filter(question => isTopicGuessQuestion(question.stem)).map(question => question.id));
-  if (!removedIds.size) return 0;
+function isContextlessQuestion(question) {
+  if (question.type === 'essay') return false;
+  const stem = normalize(question.stem);
+  return /trong noi dung bai hoc.{0,100}(?:khai niem duoc de cap|chu de nao)|(?:khai niem duoc de cap|concept discussed).{0,70}(?:nhan dinh nao|which statement)|which statement.{0,80}(?:lesson|course material)/i.test(stem);
+}
+
+function removeUnusableGeneratedQuestions(bank) {
+  bank.examSets = bank.examSets.filter(set => set.id === 'exam-01' || set.id === 'exam-02');
+  const removedIds = new Set(bank.questions.filter(question =>
+    /^generated-(?:mcq|essay)-\d+$/i.test(question.id) || isTopicGuessQuestion(question.stem) || isContextlessQuestion(question),
+  ).map(question => question.id));
   bank.questions = bank.questions.filter(question => !removedIds.has(question.id));
   const questionsById = new Map(bank.questions.map(question => [question.id, question]));
   bank.examSets = bank.examSets.map(set => {
@@ -166,10 +174,8 @@ function shuffledFacts(facts, random) {
 
 function distractorsFor(facts, answerFact, count, offset) {
   const sameTopic = facts.filter(fact => fact.id !== answerFact.id && fact.topic === answerFact.topic);
-  const day = String(answerFact.topic).match(/(?:study\s+)?day\s*0?(\d{1,2})/i)?.[1];
-  const sameDay = day ? facts.filter(fact => fact.id !== answerFact.id && fact.topic !== answerFact.topic && String(fact.topic).match(/(?:study\s+)?day\s*0?(\d{1,2})/i)?.[1] === day) : [];
-  const candidates = sameTopic.length >= count ? sameTopic : sameDay.length >= count ? sameDay : facts.filter(fact => fact.id !== answerFact.id);
-  if (candidates.length < count) throw new Error(`Không đủ phương án nhiễu theo chủ đề khác cho nguồn ${answerFact.id}.`);
+  const candidates = sameTopic;
+  if (candidates.length < count) throw new Error(`Không đủ phương án nhiễu cùng chủ đề cho nguồn ${answerFact.id}.`);
   const start = offset % (candidates.length - count + 1);
   return candidates.slice(start, start + count);
 }
@@ -200,10 +206,13 @@ export function buildAdditionalExams({ existingQuestions, existingSets, facts, o
     seen.add(text);
     uniqueFacts.push({ ...fact, text: fact.text.trim() });
   }
-  if (uniqueFacts.length < required) throw new Error(`Không đủ nguồn câu hỏi sau khi bỏ nội dung trùng: cần ${required}, hiện có ${uniqueFacts.length}.`);
+  const topicCounts = new Map();
+  for (const fact of uniqueFacts) topicCounts.set(fact.topic, (topicCounts.get(fact.topic) ?? 0) + 1);
+  const distractorReadyFacts = uniqueFacts.filter(fact => topicCounts.get(fact.topic) >= 4);
+  if (distractorReadyFacts.length < required) throw new Error(`Không đủ nguồn sạch có ít nhất ba phương án nhiễu cùng chủ đề: cần ${required}, hiện có ${distractorReadyFacts.length}.`);
 
   const random = randomFor(randomSeed);
-  const ordered = shuffledFacts(uniqueFacts, random);
+  const ordered = shuffledFacts(distractorReadyFacts, random);
   const allTopics = [...new Set(ordered.map(fact => fact.topic))];
   if (allTopics.length < 4) throw new Error('Cần ít nhất bốn chủ đề nguồn để tạo phương án nhiễu.');
   const questions = [];
@@ -217,32 +226,18 @@ export function buildAdditionalExams({ existingQuestions, existingSets, facts, o
     for (let index = 0; index < mcqCount; index++) {
       const fact = ordered[cursor++];
       const id = `generated-mcq-${String(mcqSerial++).padStart(4, '0')}`;
-      let question;
-      if (index % 2 === 0) {
-        const concept = fact.text.match(/^\*\*([^*]{2,70}):\*\*/)?.[1];
-        const words = fact.text.split(/\s+/);
-        const excerpt = `${words.slice(0, 5).join(' ')} … ${words.slice(-4).join(' ')}`;
-        const prompt = concept ? `Phát biểu nào mô tả đúng “${concept.trim()}”?` : `Chọn phát biểu hoàn chỉnh đúng với ghi chú trong slide: “${excerpt}”`;
-        const distractors = distractorsFor(ordered, fact, 3, cursor + index * 17);
-        const choices = shuffle([fact, ...distractors], random);
-        const answerIndex = choices.findIndex(choice => choice.id === fact.id);
-        question = questionBase(id, fact,
-          prompt,
-          choices.map((choice, choiceIndex) => ({ id: String.fromCharCode(65 + choiceIndex), text: choice.text })),
-          'single_choice', [String.fromCharCode(65 + answerIndex)],
-          `Đáp án đề xuất dựa trên nội dung slide: “${fact.text}”. Cần người rà soát xác nhận.`);
-      } else {
-        const distractors = distractorsFor(ordered, fact, 3, cursor + index * 17);
-        const choices = shuffle([fact, ...distractors], random);
-        const answerIndex = choices.findIndex(choice => choice.id === fact.id);
-        const words = fact.text.split(/\s+/);
-        const excerpt = `${words.slice(0, 5).join(' ')} … ${words.slice(-4).join(' ')}`;
-        question = questionBase(id, fact,
-          `Chọn phát biểu hoàn chỉnh đúng với ghi chú trong slide: “${excerpt}”`,
-          choices.map((choice, choiceIndex) => ({ id: String.fromCharCode(65 + choiceIndex), text: choice.text })),
-          'single_choice', [String.fromCharCode(65 + answerIndex)],
-          'Đáp án đề xuất khớp với trích đoạn nguồn. Các phương án còn lại được lấy từ chủ đề khác; cần người rà soát xác nhận.');
-      }
+      const concept = fact.text.match(/^\*\*([^*]{2,70}):\*\*/)?.[1];
+      const distractors = distractorsFor(ordered, fact, 3, cursor + index * 17);
+      const choices = shuffle([fact, ...distractors], random);
+      const answerIndex = choices.findIndex(choice => choice.id === fact.id);
+      const prompt = concept
+        ? `Một người lần đầu học AI đọc thông tin sau: “${fact.text}”. Ý nào diễn giải đúng nhất về ${concept.trim()}?`
+        : `Một người lần đầu học AI đọc thông tin sau: “${fact.text}”. Kết luận nào được thông tin này hỗ trợ trực tiếp?`;
+      const question = questionBase(id, fact,
+        prompt,
+        choices.map((choice, choiceIndex) => ({ id: String.fromCharCode(65 + choiceIndex), text: choice.text })),
+        'single_choice', [String.fromCharCode(65 + answerIndex)],
+        `Đáp án đề xuất được hỗ trợ bởi thông tin đã nêu trong câu hỏi: “${fact.text}”. Cần người rà soát xác nhận.`);
       question.topic = 'Đọc hiểu nguồn';
       questions.push(question);
       questionIds.push(id);
@@ -316,7 +311,7 @@ export function extractSourceFacts(chunks, cheatSheet) {
 function isCandidate(text) {
   const words = text.split(/\s+/);
   const letters = (text.match(/[A-Za-zÀ-ỹ]/g) ?? []).length;
-  const metadataOrInstructions = /\b(instructor|lecturer|chapter lead|developer expert|ai in action|agenda|homework|q\s*&\s*a|nghỉ giải lao|quét mã qr|discord|slido|terminal|template\.py|requirements\.txt|pip install|github|email|link bên dưới|liên hệ hỗ trợ|trả lời các câu hỏi|chạy thành công|mở transformer|thử trực tiếp|sáng nay|chiều nay|học viên|giảng viên|hẹn gặp|cảm ơn|đăng ký kênh|subscribe|video tiếp theo|các bạn|mọi người|nhóm\s*\d|thực hành|cài đặt|option [a-d]:|supports dual-import|maintains the last|call .*api|you must strictly|operational boundaries|nộp trước buổi|handbook|tóm tắt q\d|q\d:|nguồn:|source:|mẹo:)\b|\bday\s*0?\d+\s+\d+\s*\/\s*\d+|\[[^\]]*(?:tên|name|giảng viên|instructor)[^\]]*\]|https?:|www\.|@|\b\d{1,2}:\d{2}\b|\b20\d{2}\b|\.(?:py|ipynb)\b|[■□☐�]/i.test(text);
+  const metadataOrInstructions = /\b(instructor|lecturer|chapter lead|developer expert|ai in action|agenda|homework|q\s*&\s*a|nghỉ giải lao|quét mã qr|discord|slido|terminal|template\.py|requirements\.txt|pip install|github|email|link bên dưới|liên hệ hỗ trợ|trả lời các câu hỏi|chạy thành công|mở transformer|thử trực tiếp|sáng nay|chiều nay|học viên|giảng viên|hẹn gặp|cảm ơn|đăng ký kênh|subscribe|video tiếp theo|các bạn|mọi người|nhóm\s*\d|thực hành|cài đặt|option [a-d]:|supports dual-import|maintains the last|call .*api|you must strictly|operational boundaries|nộp trước buổi|handbook|tóm tắt q\d|q\d:|nguồn:|source:|mẹo:|ghi nhớ\s*:\s*điền|điền .* cột|bảng theo dõi|lượt nhóm trình bày|nhóm phản biện|người trình bày|bốc thang điểm|file tự tính|câu hỏi cho bài tập|tháng \d+ có lãi|dòng \d+|trang \d+|nộp bài|hạn nộp|họ tên|mã sinh viên|user muốn|user wants)\b|\bday\s*0?\d+\s+\d+\s*\/\s*\d+|\[[^\]]*(?:tên|name|giảng viên|instructor)[^\]]*\]|https?:|www\.|@|\b\d{1,2}:\d{2}\b|\b20\d{2}\b|\.(?:py|ipynb)\b|[■□☐�]/i.test(text);
   const endsMidThought = /\b(?:và|hoặc|của|với|trong|theo|như|để|từ|một|các|là|thì|khi|nếu|and|or|of|with|for|to|the|a|an|in|on|by|from|as|at|into|but|which|that|including)\s*[.,;:…]*$/i.test(text);
   const malformed = /[?…]$|\b\w{26,}\b|(?:^|\s)#\s*(?:option|measure|todo)\b/i.test(text);
   return text.length >= 52 && text.length <= 180 && words.length >= 8 && letters / text.length > 0.48 &&
@@ -327,17 +322,11 @@ function isCandidate(text) {
 function run() {
   const bank = JSON.parse(readFileSync(inputPath, 'utf8'));
   applyExam01Proposals(bank.questions, bank.examSets);
-  const removedTopicQuestions = removeTopicGuessQuestions(bank);
-  const chunkPath = resolve(sourceRoot, '05_data/knowledge_chunks.jsonl');
-  const chunks = readFileSync(chunkPath, 'utf8').trim().split(/\r?\n/).map(line => JSON.parse(line));
-  const cheatSheet = readFileSync(resolve(sourceRoot, '06_cheat_sheet/CHEAT_SHEET_TONG_HOP.md'), 'utf8');
-  const facts = extractSourceFacts(chunks, cheatSheet);
-  const built = buildAdditionalExams({ existingQuestions: bank.questions, existingSets: bank.examSets, facts });
-  assignStudyDays(built.questions);
-  const generatedIds = new Set(built.examSets.slice(2).flatMap(set => set.questionIds));
-  const output = { ...bank, questions: built.questions, examSets: built.examSets, generatedExamQuestionCount: generatedIds.size };
+  const removedGeneratedQuestions = removeUnusableGeneratedQuestions(bank);
+  assignStudyDays(bank.questions);
+  const output = { ...bank, generatedExamQuestionCount: 0 };
   writeFileSync(outputPath, `${JSON.stringify(output, null, 2)}\n`);
-  console.log(`Tạo ${built.examSets.length} đề, ${generatedIds.size} câu bổ sung từ ${facts.length} trích đoạn nguồn; đã loại ${removedTopicQuestions} câu đoán chủ đề.`);
+  console.log(`Giữ ${bank.examSets.length} đề có câu hỏi độc lập; đã loại ${removedGeneratedQuestions} câu sinh tự động từ ghi chú/trích đoạn thô.`);
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) run();

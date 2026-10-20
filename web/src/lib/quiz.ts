@@ -44,7 +44,7 @@ export function loadAttemptData(storage: Storage = localStorage): string {
 export function loadQuestions(questions: Question[]): Question[] {
   const seen = new Set<string>();
   return questions.filter(question => {
-    if (!question.id || seen.has(question.id) || isTopicGuessQuestion(question.stem)) return false;
+    if (!question.id || seen.has(question.id) || /^generated-(?:mcq|essay)-\d+$/i.test(question.id) || isTopicGuessQuestion(question.stem) || isContextlessLegacyQuestion(question)) return false;
     seen.add(question.id);
     return true;
   });
@@ -53,6 +53,12 @@ export function loadQuestions(questions: Question[]): Question[] {
 function isTopicGuessQuestion(stem: string): boolean {
   const normalized = stem.normalize('NFKD').replace(/\p{Diacritic}/gu, '').replaceAll('đ', 'd').toLowerCase();
   return /(?:chon|choose|pick|select|identify|match)\s+(?:(?:the|mot)\s+)?(?:chu de|topic|theme)\b|(?:chu de nao|which topic|what topic)\b|(?:trich doan|doan trich|excerpt|passage).{0,50}(?:duoc xep|thuoc|gan voi|belongs to|classified as|mapped to).{0,30}(?:chu de|topic|theme)|noi dung nay.{0,40}(?:xep|thuoc).{0,30}(?:chu de|topic|theme)/i.test(normalized);
+}
+
+function isContextlessLegacyQuestion(question: Question): boolean {
+  if (question.type === 'essay') return false;
+  const normalized = question.stem.normalize('NFKD').replace(/\p{Diacritic}/gu, '').replaceAll('đ', 'd').toLowerCase();
+  return /trong noi dung bai hoc.{0,100}(?:khai niem duoc de cap|chu de nao)|(?:khai niem duoc de cap|concept discussed).{0,70}(?:nhan dinh nao|which statement)|which statement.{0,80}(?:lesson|course material)|ghi chu trong slide|notes? (?:from|in) (?:the )?slides|slide ghi chu/i.test(normalized);
 }
 
 const statuses = new Set(['untranscribed', 'transcribed', 'answer_proposed', 'expert_verified']);

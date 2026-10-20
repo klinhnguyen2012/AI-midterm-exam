@@ -43,3 +43,7 @@ Local storage keys use the `k4-` prefix. Attempts at `k4-attempts` are migrated 
 The local exam bank contains 22 fixed forms. Exams 01 and 02 use the two supplied sets. Exams 03–22 each contain 85 questions (60 MCQ and 25 typed-answer prompts) assembled from local course excerpts. Their MCQs ask learners to match a cited excerpt to its course topic or identify its source continuation; stems are distinct and generated question IDs are not reused across added forms. MCQ answer keys are proposals and remain unverified; essay prompts include a self-review rubric and are not scored automatically. Treat these added forms as practice material, not official exams.
 
 The sidebar Flashcard page contains 45 concept cards based on the cheat sheet. Flip each card, filter by topic, mark it “Nhớ rồi” or “Ôn lại”, and return to saved cards from the “Đã nhớ” tab. Progress stays in this browser under `k4-flashcard-progress-v1`.
+
+## Check sheet
+
+The sidebar's **Check sheet** page combines the former source library and cheat sheet. Select a Day to see its slide text and only the matching compact review topics. Expand a topic and item to read the existing cheat-sheet notes. Each item shows a small source label such as `Day 8 · RAG Pipeline`; the label links to that day's extracted slide text. Synthesized overviews and notes from previous exams are marked `Tổng hợp` or `Đề khóa trước` rather than attributed to a slide.

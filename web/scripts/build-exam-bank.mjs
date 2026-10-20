@@ -35,6 +35,74 @@ function applyExam01Proposals(questions, examSets) {
   return questions;
 }
 
+function inferStudyDay(question) {
+  if (Number.isInteger(question.day) && question.day > 0) return question.day;
+  const sources = [question.topic, ...(question.sourceFiles ?? [])].filter(Boolean).join(' ');
+  const explicitDay = sources.match(/(?:study\s+)?day\s*0?(\d{1,2})(?:\.\d+)?/i);
+  if (explicitDay) return Number(explicitDay[1]);
+
+  const topic = normalize(question.topic ?? '');
+  const topicDays = [
+    [/ai foundations|llm|sampling|transformer|token/, 1],
+    [/scoping|problem definition|business problem|readiness/, 2],
+    [/multi agent/, 9],
+    [/agent|react|workflow/, 3],
+    [/prompt|tool calling/, 4],
+    [/product thinking|requirements|uncertainty/, 5],
+    [/project management/, 6],
+    [/data foundations/, 7],
+    [/rag evaluation/, 14],
+    [/rag|retrieval/, 8],
+    [/data pipeline|data observability/, 10],
+    [/guardrail|safety|responsible ai/, 11],
+    [/deployment|production|cloud/, 12],
+    [/monitoring|logging|observability/, 13],
+    [/evaluation|benchmark|classification metrics|golden dataset/, 14],
+    [/gpu|infrastructure|operations/, 15],
+    [/first principles|ai product manager/, 16],
+    [/product discovery|interview|mom test/, 17],
+    [/experiment|human centered/, 18],
+    [/prototype/, 19],
+    [/retention|engagement|product metrics|metrics/, 20],
+    [/ethics|luat ai|regulation/, 21],
+    [/gtm|go to market/, 22],
+    [/growth/, 23],
+    [/cost|roi|pricing|economics/, 24],
+    [/stakeholder|team health/, 25],
+    [/roadmap/, 28],
+  ];
+  for (const [pattern, day] of topicDays) if (pattern.test(topic)) return day;
+
+  const text = normalize([question.stem, question.explanation, question.evidenceQuote].join(' '));
+  const textDays = [
+    [/ragas|faithfulness|context recall|golden dataset|evaluation|eval pipeline|bleu/, 14],
+    [/eu ai act|luat|law|high risk/, 21],
+    [/lora|quantization|gpu|model serving|lakehouse|finops|semantic caching/, 15],
+    [/prompt injection|jailbreak|guardrail|human in the loop|pii/, 11],
+    [/multi agent|multi-agent|supervisor worker|parallel processing/, 9],
+    [/c suite|stakeholder|change management|adoption/, 25],
+    [/readiness checklist|problem scoping|go decision/, 2],
+    [/classification|discriminative|machine learning|deep learning|transformer/, 1],
+    [/context engineering|react loop/, 3],
+    [/chunk|embedding|vector|retrieval|rag/, 8],
+    [/prompt grounding|system prompt|rtcf|tool schema/, 4],
+    [/react|tool call|agent|workflow/, 3],
+    [/roi|cost saving|pricing|financial model|cost per request/, 24],
+    [/monitor|latency|observability|p99|drift|freshness/, 13],
+    [/deploy|production|api|ci\/cd|cloud|gpu|quantization|lakehouse/, 12],
+    [/data quality|garbage in|selection bias|data pipeline/, 7],
+    [/market|stakeholder|product|roadmap|business outcome|customer/, 2],
+    [/prompt|sampling|temperature|token/, 1],
+  ];
+  for (const [pattern, day] of textDays) if (pattern.test(text)) return day;
+  return 1;
+}
+
+function assignStudyDays(questions) {
+  for (const question of questions) question.day = inferStudyDay(question);
+  return questions;
+}
+
 export function normalize(text) {
   return text.normalize('NFKD').replace(/\p{Diacritic}/gu, '').replaceAll('đ', 'd').replaceAll('Đ', 'd')
     .toLocaleLowerCase('vi').replace(/[^a-z0-9]+/g, ' ').trim().replace(/\s+/g, ' ');
@@ -241,6 +309,7 @@ function run() {
   const cheatSheet = readFileSync(resolve(sourceRoot, '06_cheat_sheet/CHEAT_SHEET_TONG_HOP.md'), 'utf8');
   const facts = extractSourceFacts(chunks, cheatSheet);
   const built = buildAdditionalExams({ existingQuestions: bank.questions, existingSets: bank.examSets, facts });
+  assignStudyDays(built.questions);
   const generatedIds = new Set(built.examSets.slice(2).flatMap(set => set.questionIds));
   const output = { ...bank, questions: built.questions, examSets: built.examSets, generatedExamQuestionCount: generatedIds.size };
   writeFileSync(outputPath, `${JSON.stringify(output, null, 2)}\n`);

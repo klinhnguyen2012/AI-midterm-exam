@@ -9,6 +9,7 @@ const sourceRoot = resolve(repoRoot, 'AI_Thuc_Chien_K4_Midterm');
 const inputPath = resolve(sourceRoot, '05_data/exam_bank_seed.json');
 const outputPath = resolve(webRoot, 'src/data/exam_bank_seed.json');
 const exam01ProposalsPath = resolve(webRoot, 'content/exam01-answer-proposals.json');
+const exam02ProposalsPath = resolve(webRoot, 'content/exam02-answer-proposals.json');
 const generatedAt = '2026-10-20T00:00:00.000Z';
 
 function applyExam01Proposals(questions, examSets) {
@@ -33,6 +34,20 @@ function applyExam01Proposals(questions, examSets) {
     throw new Error('Tập đáp án đề xuất không khớp với Đề 01.');
   }
   return questions;
+}
+
+function applyExam02Proposals(questions) {
+  const proposals = JSON.parse(readFileSync(exam02ProposalsPath, 'utf8'));
+  for (const proposal of proposals.answers) {
+    const question = questions.find(item => item.id === proposal.id);
+    if (!question || question.type !== 'essay') throw new Error(`Không tìm thấy câu tự luận ${proposal.id} của Đề 02.`);
+    question.explanation = proposal.explanation;
+    question.reviewerNotes = proposal.reviewerNotes;
+    question.verificationStatus = 'answer_proposed';
+  }
+  for (const question of proposals.additionalQuestions) {
+    if (!questions.some(item => item.id === question.id)) questions.push(question);
+  }
 }
 
 function inferStudyDay(question) {
@@ -322,6 +337,7 @@ function isCandidate(text) {
 function run() {
   const bank = JSON.parse(readFileSync(inputPath, 'utf8'));
   applyExam01Proposals(bank.questions, bank.examSets);
+  applyExam02Proposals(bank.questions);
   const removedGeneratedQuestions = removeUnusableGeneratedQuestions(bank);
   assignStudyDays(bank.questions);
   const output = { ...bank, generatedExamQuestionCount: 0 };

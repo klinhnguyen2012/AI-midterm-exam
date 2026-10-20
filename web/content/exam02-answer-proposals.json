@@ -1,0 +1,157 @@
+{
+  "answers": [
+    {
+      "id": "generated-exam02-essay-001",
+      "explanation": "Dùng classifier/discriminative model để gán giao dịch vào nhãn gian lận cố định vì đầu ra là một lớp trong tập nhãn đã biết. Dùng generative AI để viết phần giải thích chính sách cho chuyên viên. Chỉ gọi agent khi cần lập kế hoạch hoặc dùng công cụ; kiểm tra quyền và để chuyên viên duyệt quyết định rủi ro cao. Nguồn nêu rõ: discriminative model dự đoán nhãn, generative model sinh văn bản; agent có vòng planning/tool/action/observation.",
+      "reviewerNotes": "Đáp án mẫu do hệ thống biên soạn từ evidenceQuote và học liệu được trích dẫn; là đáp án đề xuất, cần chuyên gia rà soát."
+    },
+    {
+      "id": "generated-exam02-essay-002",
+      "explanation": "Pipeline: văn bản được tokenizer tách thành token IDs; mỗi ID được ánh xạ thành embedding; các lớp Transformer dùng attention và MLP để xử lý ngữ cảnh; lớp cuối tạo logits cho token kế tiếp; bước decoding chọn token theo cấu hình sampling. Lặp lại quá trình sinh token cho đến khi dừng, rồi giải mã token thành văn bản. Nguồn tóm tắt trực tiếp chuỗi text → tokenizer → token IDs → embedding → Transformer → logits → decoding.",
+      "reviewerNotes": "Đáp án mẫu do hệ thống biên soạn từ evidenceQuote và học liệu được trích dẫn; là đáp án đề xuất, cần chuyên gia rà soát."
+    },
+    {
+      "id": "generated-exam02-essay-003",
+      "explanation": "Sắp xác suất giảm dần: A=.45, B=.30, C=.15, D=.10. A+B=.75, chưa đạt ngưỡng .80; cộng C được .90. Vì vậy top-p=.80 giữ tập nhỏ nhất đạt ngưỡng là A, B và C; D bị loại.",
+      "reviewerNotes": "Đáp án mẫu do hệ thống biên soạn từ evidenceQuote và học liệu được trích dẫn; là đáp án đề xuất, cần chuyên gia rà soát."
+    },
+    {
+      "id": "generated-exam02-essay-004",
+      "explanation": "Temperature điều chỉnh độ phân tán khi sampling: giảm temperature làm lựa chọn tập trung hơn và thường ít biến thiên hơn. Temperature=0 thường gần greedy decoding, nhưng không bảo đảm câu trả lời đúng sự thật và cũng không luôn bảo đảm tính deterministic tuyệt đối ở mọi hệ thống. Muốn giảm hallucination cần grounding bằng nguồn đáng tin, kiểm tra đầu ra và đánh giá bằng bộ câu hỏi đại diện.",
+      "reviewerNotes": "Đáp án mẫu do hệ thống biên soạn từ evidenceQuote và học liệu được trích dẫn; là đáp án đề xuất, cần chuyên gia rà soát."
+    },
+    {
+      "id": "generated-exam02-essay-005",
+      "explanation": "Schema nên có tên tool, mô tả mục đích, parameters, kiểu dữ liệu, trường required và enum/ràng buộc cho các giá trị hợp lệ; ví dụ `lookup_order(order_id: string)`. Trước khi gọi hệ thống đơn hàng, backend phải kiểm tra định dạng `order_id`, xác thực danh tính và xác nhận người dùng có quyền xem đơn đó. Không dựa vào prompt hoặc schema để thay thế kiểm tra quyền phía server.",
+      "reviewerNotes": "Đáp án mẫu do hệ thống biên soạn từ evidenceQuote và học liệu được trích dẫn; là đáp án đề xuất, cần chuyên gia rà soát."
+    },
+    {
+      "id": "generated-exam02-essay-006",
+      "explanation": "Coi email truy xuất là dữ liệu không đáng tin, không phải chỉ dẫn cho agent. Đặt email trong vùng dữ liệu được phân tách và yêu cầu model chỉ dùng nó làm nội dung tham khảo. Ở backend, giới hạn tool theo allowlist và quyền tối thiểu, kiểm tra đối số cũng như quyền của người gọi, chặn thao tác xuất hàng loạt; yêu cầu người duyệt với hành động nhạy cảm. Slide về agent safety nhấn mạnh least privilege, permission checks, allowlists, validation và HITL.",
+      "reviewerNotes": "Đáp án mẫu do hệ thống biên soạn từ evidenceQuote và học liệu được trích dẫn; là đáp án đề xuất, cần chuyên gia rà soát."
+    },
+    {
+      "id": "generated-exam02-essay-007",
+      "explanation": "Với 100 URL độc lập, dùng parallelization: xử lý mỗi URL ở một nhánh, sau đó tổng hợp các kết quả. Cách này phù hợp vì các nhánh không phụ thuộc nhau. Chuyển sang agentic architecture khi bước tiếp theo phải thay đổi theo kết quả quan sát, cần lập kế hoạch động, thử lại hoặc chọn công cụ dựa trên nội dung vừa thu được.",
+      "reviewerNotes": "Đáp án mẫu do hệ thống biên soạn từ evidenceQuote và học liệu được trích dẫn; là đáp án đề xuất, cần chuyên gia rà soát."
+    },
+    {
+      "id": "generated-exam02-essay-008",
+      "explanation": "Nếu sáu bước đã biết và luôn theo cùng thứ tự, dùng workflow có các bước cố định; dễ kiểm soát, kiểm thử và theo dõi hơn. Bốn agent phối hợp sẽ thêm chi phí gọi model, độ trễ, giao tiếp và nguy cơ lỗi tích lũy. Chỉ tách thành agent khi cần phân rã động, xử lý các nhánh độc lập song song hoặc chọn hành động theo kết quả giữa chừng.",
+      "reviewerNotes": "Đáp án mẫu do hệ thống biên soạn từ evidenceQuote và học liệu được trích dẫn; là đáp án đề xuất, cần chuyên gia rà soát."
+    },
+    {
+      "id": "generated-exam02-essay-009",
+      "explanation": "Lưu tối thiểu `tenant_id`, phiên bản chính sách, ngày hiệu lực/kết thúc, nguồn tài liệu và ACL/role được phép đọc. Trước retrieval, xác thực người dùng rồi lọc tenant và quyền truy cập; chỉ lấy phiên bản có hiệu lực tại thời điểm câu hỏi. Sau đó mới xếp hạng và sinh câu trả lời, đồng thời giữ citation về tài liệu đã dùng.",
+      "reviewerNotes": "Đáp án mẫu do hệ thống biên soạn từ evidenceQuote và học liệu được trích dẫn; là đáp án đề xuất, cần chuyên gia rà soát."
+    },
+    {
+      "id": "generated-exam02-essay-010",
+      "explanation": "Chia theo cấu trúc tiêu đề và ranh giới ngữ nghĩa; giữ điều kiện cùng đoạn ngoại lệ, hoặc lưu đoạn cha để lấy thêm ngữ cảnh khi một chunk con khớp. Có thể dùng overlap nhỏ nếu điều kiện nằm sát ranh giới. Chunk quá nhỏ làm mất quan hệ giữa quy tắc và ngoại lệ; chunk quá lớn làm retrieval kém chính xác và tăng token. Đo retrieval trên các câu hỏi có ngoại lệ để chọn kích thước và overlap.",
+      "reviewerNotes": "Đáp án mẫu do hệ thống biên soạn từ evidenceQuote và học liệu được trích dẫn; là đáp án đề xuất, cần chuyên gia rà soát."
+    },
+    {
+      "id": "generated-exam02-essay-011",
+      "explanation": "Đồng bộ source of truth, đánh dấu phiên bản cũ hết hiệu lực, ingest và tạo lại embedding/index cho bản mới, rồi lưu version/effective date trong metadata. Truy vấn phải lọc đúng phiên bản hiện hành. Chạy lại bộ câu hỏi hồi quy, đặc biệt các câu từng trả lời từ bản cũ; theo dõi freshness và rollback nếu chất lượng giảm. RAG freshness được xử lý bằng cập nhật/reindex nguồn, không mặc định fine-tune model.",
+      "reviewerNotes": "Đáp án mẫu do hệ thống biên soạn từ evidenceQuote và học liệu được trích dẫn; là đáp án đề xuất, cần chuyên gia rà soát."
+    },
+    {
+      "id": "generated-exam02-essay-012",
+      "explanation": "Theo dõi riêng từng lớp: retrieval dùng Recall@k/Context Recall hoặc MRR; generation dùng faithfulness, answer correctness và completeness; source dùng độ mới, phiên bản và độ phủ tài liệu; evaluation dùng chất lượng nhãn, rubric và mức đồng thuận chuyên gia. Khi lỗi, kiểm tra lần lượt: có lấy đúng đoạn không, câu trả lời có bám đoạn không, nguồn có mới không, và đáp án chuẩn có đúng không.",
+      "reviewerNotes": "Đáp án mẫu do hệ thống biên soạn từ evidenceQuote và học liệu được trích dẫn; là đáp án đề xuất, cần chuyên gia rà soát."
+    },
+    {
+      "id": "generated-exam02-essay-013",
+      "explanation": "Dùng faithfulness/citation support để kiểm tra mọi khẳng định có bằng chứng trong context; dùng Context Recall hoặc completeness để phát hiện policy exception bị bỏ sót. Sau đó đối chiếu citation với chunk thực sự được truy xuất và kiểm tra liệu chunk có chứa ngoại lệ. Nếu thiếu chunk là retrieval/coverage; nếu chunk có mà câu trả lời bỏ qua là generation/completeness.",
+      "reviewerNotes": "Đáp án mẫu do hệ thống biên soạn từ evidenceQuote và học liệu được trích dẫn; là đáp án đề xuất, cần chuyên gia rà soát."
+    },
+    {
+      "id": "generated-exam02-essay-014",
+      "explanation": "Lấy mẫu phân tầng theo intent, tần suất, mức rủi ro và loại người dùng; bổ sung edge cases, câu hỏi ngoài phạm vi và tình huống đối kháng. Mỗi dòng nên có query, context/source version, expected behavior hoặc answer, evidence, rubric, nhãn và phiên bản dataset. Chuyên gia miền xác nhận đáp án, ngoại lệ và rubric trước khi dùng làm golden set.",
+      "reviewerNotes": "Đáp án mẫu do hệ thống biên soạn từ evidenceQuote và học liệu được trích dẫn; là đáp án đề xuất, cần chuyên gia rà soát."
+    },
+    {
+      "id": "generated-exam02-essay-015",
+      "explanation": "Ưu tiên Recall vì bỏ sót giao dịch gian lận (false negative) đắt hơn cảnh báo nhầm. Hạ threshold thường bắt được nhiều vụ hơn nhưng làm tăng false positives và khối lượng điều tra. Chọn ngưỡng trên tập validation đại diện theo chi phí thực tế, rồi theo dõi cả recall, precision và năng lực xử lý cảnh báo.",
+      "reviewerNotes": "Đáp án mẫu do hệ thống biên soạn từ evidenceQuote và học liệu được trích dẫn; là đáp án đề xuất, cần chuyên gia rà soát."
+    },
+    {
+      "id": "generated-exam02-essay-016",
+      "explanation": "Ghi actor (ai nộp/duyệt hồ sơ), job và các bước workflow, điểm nghẽn cụ thể, tác động của chậm trễ, bằng chứng đo được (thời gian chờ, số hồ sơ, tỷ lệ làm lại) và kết quả mong muốn. Ví dụ mục tiêu là giảm thời gian duyệt mà không tăng lỗi tuân thủ. Chưa chọn AI trước khi biết quy tắc hoặc thay đổi quy trình thông thường có giải quyết được không.",
+      "reviewerNotes": "Đáp án mẫu do hệ thống biên soạn từ evidenceQuote và học liệu được trích dẫn; là đáp án đề xuất, cần chuyên gia rà soát."
+    },
+    {
+      "id": "generated-exam02-essay-017",
+      "explanation": "Ghi ba baseline trước pilot: phút xử lý trung bình mỗi ticket; tỷ lệ giải quyết đúng hoặc phải mở lại; chi phí mỗi ticket (hoặc backlog nếu đó là điểm đau chính). Dùng cùng định nghĩa, cùng khoảng thời gian và cùng nhóm ticket khi so sánh sau tự động hóa 1.000 ticket/tuần, để thấy tốc độ tăng có làm giảm chất lượng hay chỉ chuyển chi phí sang bước sửa lỗi.",
+      "reviewerNotes": "Đáp án mẫu do hệ thống biên soạn từ evidenceQuote và học liệu được trích dẫn; là đáp án đề xuất, cần chuyên gia rà soát."
+    },
+    {
+      "id": "generated-exam02-essay-018",
+      "explanation": "Hỏi về hành vi đã xảy ra, không hỏi giả định: “Lần gần nhất anh/chị phải nhập báo cáo là khi nào? Hãy kể lại từng bước.” “Anh/chị xử lý phần khó nhất thế nào và mất bao lâu?” “Việc này xảy ra bao lâu một lần, gây hậu quả gì, và hiện anh/chị dùng cách nào để giải quyết?” Câu trả lời về hành vi và workaround đáng tin hơn câu “anh/chị có muốn dùng AI không?”.",
+      "reviewerNotes": "Đáp án mẫu do hệ thống biên soạn từ evidenceQuote và học liệu được trích dẫn; là đáp án đề xuất, cần chuyên gia rà soát."
+    },
+    {
+      "id": "generated-exam02-essay-019",
+      "explanation": "Một North Star phù hợp là số tài liệu được người dùng chấp nhận và đưa vào sử dụng mỗi nhóm mỗi tuần, vì nó phản ánh giá trị đã nhận. Input metrics có thể là số bản nháp hoàn tất và thời gian từ yêu cầu đến bản nháp. Guardrails gồm tỷ lệ tài liệu bị sửa lớn/từ chối, lỗi nội dung có căn cứ và sự cố lộ dữ liệu; tăng sản lượng không được đánh đổi các chỉ số này.",
+      "reviewerNotes": "Đáp án mẫu do hệ thống biên soạn từ evidenceQuote và học liệu được trích dẫn; là đáp án đề xuất, cần chuyên gia rà soát."
+    },
+    {
+      "id": "generated-exam02-essay-020",
+      "explanation": "Định nghĩa activation là người dùng trong cohort hoàn tất một tác vụ giá trị, chẳng hạn tạo và lưu tài liệu đầu tiên trong bảy ngày từ đăng ký. Định nghĩa weekly retention là tỷ lệ người đã activate trong cohort quay lại thực hiện core value event ít nhất một lần ở tuần N. Ghi rõ event, cửa sổ thời gian, cohort đủ điều kiện và mẫu số; không tính lượt mở app nếu không tạo giá trị.",
+      "reviewerNotes": "Đáp án mẫu do hệ thống biên soạn từ evidenceQuote và học liệu được trích dẫn; là đáp án đề xuất, cần chuyên gia rà soát."
+    },
+    {
+      "id": "generated-exam02-essay-021",
+      "explanation": "Capacity value = 100 giờ × 200.000 đồng = 20 triệu đồng/tháng năng lực lao động được giải phóng. Đây chưa tự động là cash saving nếu công ty vẫn trả nguyên lương và chưa giảm khoản chi nào. Chỉ ghi nhận tiền mặt khi có khoản chi thực sự giảm hoặc phần năng lực được chuyển thành doanh thu/giá trị khác có bằng chứng; báo cáo hai loại lợi ích riêng.",
+      "reviewerNotes": "Đáp án mẫu do hệ thống biên soạn từ evidenceQuote và học liệu được trích dẫn; là đáp án đề xuất, cần chuyên gia rà soát."
+    },
+    {
+      "id": "generated-exam02-essay-022",
+      "explanation": "Tính chi phí biến đổi như token input/output, embedding, reranker, tool/API calls và hạ tầng; cộng chi phí cố định như tích hợp, bảo trì, đánh giá, bảo mật và vận hành. So sánh cùng khoảng thời gian, cùng sản lượng và cùng mức chất lượng với baseline; tính cả chi phí sửa lỗi/human review để tránh ROI đẹp giả tạo.",
+      "reviewerNotes": "Đáp án mẫu do hệ thống biên soạn từ evidenceQuote và học liệu được trích dẫn; là đáp án đề xuất, cần chuyên gia rà soát."
+    },
+    {
+      "id": "generated-exam02-essay-023",
+      "explanation": "Tạo eval gate gồm tập đại diện và adversarial; đặt ngưỡng riêng cho chất lượng, latency P99, cost và đúng format. Chạy shadow/canary trước khi rollout rộng, theo dõi từng guardrail và chỉ promote khi tất cả đạt ngưỡng. Giữ model/config cũ để rollback nhanh; theo dõi owner, lỗi và chi phí sau triển khai.",
+      "reviewerNotes": "Đáp án mẫu do hệ thống biên soạn từ evidenceQuote và học liệu được trích dẫn; là đáp án đề xuất, cần chuyên gia rà soát."
+    },
+    {
+      "id": "generated-exam02-essay-024",
+      "explanation": "Ghi correlation/request ID, model và version, thời gian từng bước, token/cost, tên tool, mã trạng thái/lỗi và các span trace cần để lần theo luồng. Không log nguyên văn PII nếu không cần; redact hoặc token hóa dữ liệu nhạy cảm, giới hạn quyền đọc và thời gian lưu. Khi cần tái hiện lỗi, dùng mẫu đã khử định danh hoặc lưu an toàn theo chính sách.",
+      "reviewerNotes": "Đáp án mẫu do hệ thống biên soạn từ evidenceQuote và học liệu được trích dẫn; là đáp án đề xuất, cần chuyên gia rà soát."
+    },
+    {
+      "id": "generated-exam02-essay-025",
+      "explanation": "Theo dõi thay đổi trong phân phối input, nhãn/kết quả, độ mới của knowledge source và hành vi model. Lấy incident production, phân loại nguyên nhân rồi thêm tình huống đại diện vào eval set có version; chạy lại regression và adversarial eval trước khi phát hành. Đặt alert theo ngưỡng drift/chất lượng và rollback nếu metric vượt ngưỡng xấu.",
+      "reviewerNotes": "Đáp án mẫu do hệ thống biên soạn từ evidenceQuote và học liệu được trích dẫn; là đáp án đề xuất, cần chuyên gia rà soát."
+    }
+  ],
+  "additionalQuestions": [
+    {
+      "id": "assistant-authored-reranker-001",
+      "stem": "Trong một hệ thống RAG cho câu hỏi tiếng Việt, retriever đã lấy được 20 tài liệu ứng viên nhưng thứ tự còn nhiễu. Hãy giải thích reranker sẽ xử lý danh sách này thế nào, vì sao không nên chạy trên toàn bộ cơ sở dữ liệu, và nêu một rủi ro cần kiểm soát.",
+      "type": "essay",
+      "options": [],
+      "correctAnswers": null,
+      "explanation": "Retriever tìm một tập ứng viên nhỏ trước. Cross-encoder reranker ghép query với từng document (Query + [SEP] + Document), xử lý cùng lúc để chấm độ phù hợp rồi sắp xếp lại; có thể chỉ giữ top 3. Slide minh họa CohereRerank với model multilingual `rerank-multilingual-v3.0` bọc quanh retriever. Không chạy reranker trên toàn bộ database vì cross-encoder chậm và tốn compute. Rủi ro là tăng latency/chi phí hoặc gửi nội dung nhạy cảm tới API bên ngoài; giới hạn danh sách đầu vào, khử PII, dùng nhà cung cấp được duyệt và đo recall/latency trên bộ câu hỏi chuẩn. `top_n=3` cũng cần kiểm tra để tránh bỏ mất đoạn chứa câu trả lời.",
+      "topic": "Day 8.1 - RAG Pipeline",
+      "day": 8,
+      "difficulty": "medium",
+      "sourceFiles": [
+        "04_extracted_slide_text/phase_1_day_01_15/Day 8.1 - RAG Pipeline.md"
+      ],
+      "sourcePages": [
+        77,
+        78
+      ],
+      "evidenceQuote": "Cross-Encoder ghép Query + [SEP] + Document và xử lý cùng lúc để chấm độ phù hợp. Mô hình chính xác nhưng chậm, tốn compute; chỉ dùng trên danh sách nhỏ đã lọt qua vòng 1. Slide minh họa CohereRerank top_n=3 với model rerank-multilingual-v3.0.",
+      "sourceLabel": "Day 8.1 · RAG Pipeline",
+      "verificationStatus": "answer_proposed",
+      "reviewerNotes": "Đáp án mẫu do hệ thống biên soạn từ trang 77–78 của slide; cần chuyên gia rà soát.",
+      "createdAt": "2026-10-20T00:00:00.000Z",
+      "updatedAt": "2026-10-20T00:00:00.000Z",
+      "sourceType": "assistant_authored",
+      "rawOcrText": ""
+    }
+  ]
+}

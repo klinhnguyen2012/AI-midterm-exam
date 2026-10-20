@@ -42,3 +42,4 @@
 .learning-block>strong{display:block;margin-bottom:6px;color:var(--teal);font-size:13px}
 .learning-source{display:block;padding:2px 2px 0;color:var(--muted);font-size:12px}
 @media(max-width:760px){.study-guide-panel{grid-template-columns:1fr;padding:10px}}
+.question-meta .source-label{max-width:min(310px,35vw);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}

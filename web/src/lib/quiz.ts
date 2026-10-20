@@ -84,7 +84,7 @@ export function parseCsv(text: string): Record<string, string>[] {
 }
 
 export function questionBankToCsv(questions: Question[]): string {
-  const fields: (keyof Question)[] = ['id','stem','type','options','correctAnswers','explanation','topic','day','difficulty','sourceFiles','sourcePages','evidenceQuote','verificationStatus','reviewerNotes','commonTraps','conceptToReview','createdAt','updatedAt'];
+  const fields: (keyof Question)[] = ['id','stem','type','options','correctAnswers','explanation','topic','day','difficulty','sourceFiles','sourcePages','evidenceQuote','sourceLabel','verificationStatus','reviewerNotes','commonTraps','conceptToReview','createdAt','updatedAt'];
   const quote = (value: unknown) => `"${String(value ?? '').replaceAll('"','""')}"`;
   return [fields.join(','), ...questions.map(question => fields.map(field => quote(Array.isArray(question[field]) || (question[field] && typeof question[field] === 'object') ? JSON.stringify(question[field]) : question[field])).join(','))].join('\n');
 }

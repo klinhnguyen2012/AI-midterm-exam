@@ -4,7 +4,7 @@ export interface Option { id: string; text: string; explanation?: string; }
 export interface Question {
   id: string; stem: string; type: QuestionType; options: Option[]; correctAnswers: string[] | null;
   explanation: string; topic: string; day: number | null; difficulty: 'easy' | 'medium' | 'hard';
-  sourceFiles: string[]; sourcePages: number[]; evidenceQuote: string; verificationStatus: VerificationStatus;
+  sourceFiles: string[]; sourcePages: number[]; evidenceQuote: string; sourceLabel?: string; verificationStatus: VerificationStatus;
   reviewerNotes: string; createdAt: string; updatedAt: string; commonTraps?: string; conceptToReview?: string;
   sourceType?: 'past_exam_transcription' | 'generated_variant' | 'assistant_authored' | 'user_added';
   rawOcrText?: string;

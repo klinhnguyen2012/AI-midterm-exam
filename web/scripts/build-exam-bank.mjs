@@ -156,7 +156,7 @@ function distractorsFor(facts, answerFact, count, offset) {
 function questionBase(id, fact, stem, options, type, correctAnswers, explanation) {
   return {
     id, stem, type, options, correctAnswers, explanation, topic: fact.topic, day: null, difficulty: 'medium',
-    sourceFiles: [fact.sourceFile], sourcePages: [], evidenceQuote: fact.text,
+    sourceFiles: [fact.sourceFile], sourcePages: [], evidenceQuote: fact.text, sourceLabel: fact.topic,
     verificationStatus: type === 'essay' ? 'transcribed' : 'answer_proposed',
     reviewerNotes: 'Câu biến thể được tạo từ trích đoạn nguồn cục bộ. Đáp án MCQ là đề xuất; cần rà soát trước khi xem là đáp án chính thức.',
     sourceType: 'generated_variant', rawOcrText: '', createdAt: generatedAt, updatedAt: generatedAt,
@@ -219,7 +219,7 @@ export function buildAdditionalExams({ existingQuestions, existingSets, facts, o
         const choices = shuffle([fact, ...distractors], random);
         const answerIndex = choices.findIndex(choice => choice.id === fact.id);
         question = questionBase(id, fact,
-          `Chọn phần tiếp nối đúng của ghi chú “${opening} … ${ending}” trong tài liệu “${fact.topic}”.`,
+          `Chọn phần tiếp nối đúng của ghi chú “${opening} … ${ending}”.`,
           choices.map((choice, choiceIndex) => ({ id: String.fromCharCode(65 + choiceIndex), text: choice.text })),
           'single_choice', [String.fromCharCode(65 + answerIndex)],
           'Đáp án đề xuất khớp với trích đoạn nguồn. Các phương án còn lại được lấy từ chủ đề khác; cần người rà soát xác nhận.');
@@ -239,7 +239,7 @@ export function buildAdditionalExams({ existingQuestions, existingSets, facts, o
       ];
       const prompt = prompts[(essaySerial + index) % prompts.length];
       questions.push(questionBase(id, fact,
-        `Dựa trên nội dung trong tài liệu “${fact.topic}” — “${fact.text}” — ${prompt}`,
+        `Dựa trên trích đoạn — “${fact.text}” — ${prompt}`,
         [], 'essay', null,
         `Gợi ý tự chấm: giải thích đúng nội dung trích dẫn, nối lập luận với chủ đề ${fact.topic}, và đưa ra ví dụ hoặc rủi ro có liên quan. Đây là rubric luyện tập, không phải đáp án chính thức.`));
       questionIds.push(id);

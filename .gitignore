@@ -1,0 +1,9 @@
+node_modules/
+web/node_modules/
+web/dist/
+web/.env
+web/.env.*
+web/public/dataset/
+web/src/data/
+AI_Thuc_Chien_K4_Midterm/
+*.zip

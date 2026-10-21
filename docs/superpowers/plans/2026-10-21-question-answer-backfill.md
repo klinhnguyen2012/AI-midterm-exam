@@ -31,11 +31,11 @@
 - Overlay format: `{ "answers": [{ "id": string, "correctAnswers": string[], "explanation": string, "confidence": number }] }`.
 - Build merger consumes the overlay after authored questions/proposals are applied and before unusable questions are removed; it validates each target and sets `verificationStatus: "answer_proposed"` plus backfill provenance in `reviewerNotes`.
 
-- [ ] Add a loader that treats a missing overlay as an empty `answers` array and rejects malformed JSON or duplicate question IDs.
-- [ ] Validate every overlay ID exists, is non-essay, still lacks an answer key, has unique option IDs, and every proposed answer ID references an existing option.
-- [ ] Validate single-choice proposals contain exactly one ID and multiple-choice proposals contain at least one ID.
-- [ ] Merge only validated answer IDs, explanation, proposal status, and reviewer notes; leave evidence/source fields unchanged.
-- [ ] Run `npm run prepare:data` and inspect the affected records in `web/src/data/exam_bank_seed.json`.
+- [x] Add a loader that treats a missing overlay as an empty `answers` array and rejects malformed JSON or duplicate question IDs.
+- [x] Validate every overlay ID exists, is non-essay, still lacks an answer key, has unique option IDs, and every proposed answer ID references an existing option.
+- [x] Validate single-choice proposals contain exactly one ID and multiple-choice proposals contain at least one ID.
+- [x] Merge only validated answer IDs, explanation, proposal status, and reviewer notes; leave evidence/source fields unchanged.
+- [x] Run `npm run prepare:data` and inspect the affected records in `web/src/data/exam_bank_seed.json`.
 
 ### Task 2: Build and run the one-time LLM backfill command
 
@@ -48,22 +48,22 @@
 - Command: `npm run backfill:answers`; `npm run backfill:answers -- --dry-run` performs no model request and prints only counts/IDs.
 - OpenAI response schema returns exactly one record per submitted question: `{ id, correctAnswers, explanation, confidence }`.
 
-- [ ] Read `OPENAI_API_KEY` and `OPENAI_MODEL` from root `.env` using the existing script convention or process environment; fail before a request if either is unset or still a placeholder.
-- [ ] Load current generated bank data and select only unanswered non-essay questions; skip any IDs already present in the overlay.
-- [ ] Include the stem, option IDs/text, topic, source labels/files/pages, evidence quote, and existing explanation as inference context; do not include learner data.
-- [ ] Request structured JSON for all currently targeted questions in one model call, retaining the response only in memory until every item is valid.
-- [ ] Reject unknown/duplicate/missing question IDs, invalid option IDs, invalid choice cardinality, empty explanations, or confidence outside 0–1; if any batch fails, leave the overlay unchanged.
-- [ ] Atomically write the complete overlay through a temporary file and rename only after global validation succeeds.
-- [ ] Run dry-run, then invoke the backfill once; inspect counts, status, choice IDs, explanations, and confidence without printing API credentials.
+- [x] Read `OPENAI_API_KEY` and `OPENAI_MODEL` from root `.env` using the existing script convention or process environment; fail before a request if either is unset or still a placeholder.
+- [x] Load current generated bank data and select only unanswered non-essay questions; skip any IDs already present in the overlay.
+- [x] Include the stem, option IDs/text, topic, source labels/files/pages, evidence quote, and existing explanation as inference context; do not include learner data.
+- [x] Request structured JSON for all currently targeted questions in one model call, retaining the response only in memory until every item is valid.
+- [x] Reject unknown/duplicate/missing question IDs, invalid option IDs, invalid choice cardinality, empty explanations, or confidence outside 0–1; if any batch fails, leave the overlay unchanged.
+- [x] Atomically write the complete overlay through a temporary file and rename only after global validation succeeds.
+- [x] Run dry-run, then invoke the backfill once; inspect counts, status, choice IDs, explanations, and confidence without printing API credentials.
 
 ### Task 3: Build, ship, and confirm static loading
 
 **Files:**
 - Build artifacts: generated under `web/src/data/`, `web/public/dataset/`, `web/dist/`, and `web/.vercel/output/`; do not commit generated outputs.
 
-- [ ] Run `npm run build` from `web/` and confirm TypeScript/Vite complete successfully.
-- [ ] Confirm every targeted question is present in the prepared bank with the saved proposal; confirm the 551 essays still have no `correctAnswers` key.
-- [ ] Confirm the browser application bundle does not add a per-load request for backfill answers; it continues loading the prepared bank.
+- [x] Run `npm run build` from `web/` and confirm TypeScript/Vite complete successfully.
+- [x] Confirm every targeted question is present in the prepared bank with the saved proposal; confirm the 551 essays still have no `correctAnswers` key.
+- [x] Confirm the browser application bundle does not add a per-load request for backfill answers; it continues loading the prepared bank.
 - [ ] Commit the code and overlay with a descriptive message; push the authorized change to `main`.
 - [ ] Run `npx vercel build --prod --yes` and `npx vercel deploy --prebuilt --prod --yes` from `web/` so the production alias uses the prepared dataset.
 - [ ] Fetch the production page and confirm it serves the new static bundle successfully.

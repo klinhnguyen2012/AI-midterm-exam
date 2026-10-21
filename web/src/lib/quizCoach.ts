@@ -6,7 +6,7 @@ export type QuizCoachRequest =
   | { action: 'explain'; question: QuestionContext; answer: { selectedTexts: string[]; answerText: string; correctAnswerText: string; explanation: string } };
 
 export async function requestQuizCoach(payload: QuizCoachRequest): Promise<string> {
-  const response = await fetch('/api/quiz-coach', {
+  const response = await fetch('/api/quiz-coach.ts', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),

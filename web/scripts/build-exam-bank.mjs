@@ -174,6 +174,18 @@ function removeUnusableGeneratedQuestions(bank) {
   return removedIds.size;
 }
 
+function restoreExam01Length(bank) {
+  const exam01 = bank.examSets.find(set => set.id === 'exam-01');
+  if (!exam01 || exam01.questionIds.length !== 84) return;
+  const replacement = bank.questions.find(question => question.id === 'authored-exam-03-002' && question.correctAnswers?.length);
+  if (!replacement) throw new Error('Không tìm thấy câu kiến thức để thay câu hỏi cá nhân đã loại khỏi Đề 01.');
+  exam01.questionIds.splice(2, 0, replacement.id);
+  const selected = exam01.questionIds.map(id => bank.questions.find(question => question.id === id)).filter(Boolean);
+  exam01.total = selected.length;
+  exam01.mcqCount = selected.filter(question => question.type !== 'essay').length;
+  exam01.essayCount = selected.filter(question => question.type === 'essay').length;
+}
+
 function randomFor(seed) {
   let state = seed >>> 0;
   return () => {
@@ -365,6 +377,7 @@ function run() {
   applyExam02Proposals(bank.questions);
   mergeAuthoredExamBank(bank);
   const removedGeneratedQuestions = removeUnusableGeneratedQuestions(bank);
+  restoreExam01Length(bank);
   assignStudyDays(bank.questions);
   const output = { ...bank, generatedExamQuestionCount: 0 };
   writeFileSync(outputPath, `${JSON.stringify(output, null, 2)}\n`);

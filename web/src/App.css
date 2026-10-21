@@ -70,3 +70,16 @@
 @media(max-width:900px){.main-area:has(.exam-shell){box-sizing:border-box}}
 .exam-mode-panel{margin-top:16px;padding:14px 18px}.exam-mode-panel>strong{display:block;color:var(--navy);font-size:13px}.exam-mode-panel .mode-select{margin:10px 0 0;gap:9px}.exam-mode-panel .mode-card{padding:11px 13px}
 @media(max-width:760px){.exam-mode-panel{padding:12px}.exam-mode-panel .mode-select{grid-template-columns:1fr;gap:7px}.exam-mode-panel .mode-card{padding:10px}}
+
+.full-lesson-content{margin-top:12px;padding-top:10px;border-top:1px solid var(--line)}
+.full-lesson-content>summary{cursor:pointer;color:var(--teal);font-size:12px;font-weight:700}
+.full-lesson-pages{display:grid;gap:5px;max-height:560px;overflow:auto;margin:9px 0;padding:1px 3px 1px 0;overscroll-behavior:contain}
+.full-lesson-page{border:1px solid var(--line);border-radius:7px;background:var(--surface)}
+.full-lesson-page>summary{display:flex;align-items:center;gap:8px;padding:8px;cursor:pointer;list-style:none}
+.full-lesson-page>summary::-webkit-details-marker{display:none}
+.full-lesson-page>summary span{flex:none;color:var(--teal);font-size:10px;font-weight:800;letter-spacing:.3px}
+.full-lesson-page>summary strong{min-width:0;color:var(--text);font-size:11px;line-height:1.35}
+.full-lesson-page .markdown-lite{padding:0 10px 10px;color:var(--text);font-size:11px;line-height:1.5;overflow-wrap:anywhere}
+.full-lesson-page .markdown-lite p{margin:5px 0}
+.full-lesson-page .markdown-lite pre{white-space:pre-wrap;overflow-wrap:anywhere}
+.full-lesson-content>small{display:block;color:var(--muted);font-size:10px;line-height:1.4}

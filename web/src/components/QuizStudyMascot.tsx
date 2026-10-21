@@ -3,6 +3,37 @@ import { Bot, Lightbulb, LoaderCircle, MessageCircleQuestion, Sparkles, X } from
 import type { Question } from '../lib/types';
 import { requestQuizCoach } from '../lib/quizCoach';
 
+function renderInline(text: string, prefix: string) {
+  const parts = text.split(/(\*\*[^*]+\*\*|__[^_]+__|(?<!\*)\*[^*]+\*(?!\*))/g).filter(Boolean);
+  return parts.map((part, index) => {
+    if ((part.startsWith('**') && part.endsWith('**')) || (part.startsWith('__') && part.endsWith('__'))) {
+      return <strong key={`${prefix}-${index}`}>{part.slice(2, -2)}</strong>;
+    }
+    if (part.startsWith('*') && part.endsWith('*')) {
+      return <em key={`${prefix}-${index}`}>{part.slice(1, -1)}</em>;
+    }
+    return part;
+  });
+}
+
+function AssistantText({ text }: { text: string }) {
+  const blocks = text.trim().split(/\n\s*\n/).filter(Boolean);
+  return <div className="mascot-rich-text">{blocks.map((block, index) => {
+    const lines = block.split('\n').map(line => line.trim()).filter(Boolean);
+    const numberedItems = lines.map(line => line.match(/^\d+[.)]\s+(.+)$/)?.[1]);
+    if (lines.length && numberedItems.every(Boolean)) {
+      return <ol key={`block-${index}`}>{numberedItems.map((item, itemIndex) => <li key={`item-${itemIndex}`}>{renderInline(item!, `ordered-${index}-${itemIndex}`)}</li>)}</ol>;
+    }
+    const bulletItems = lines.map(line => line.match(/^[-*]\s+(.+)$/)?.[1]);
+    if (lines.length && bulletItems.every(Boolean)) {
+      return <ul key={`block-${index}`}>{bulletItems.map((item, itemIndex) => <li key={`item-${itemIndex}`}>{renderInline(item!, `bullet-${index}-${itemIndex}`)}</li>)}</ul>;
+    }
+    const heading = block.match(/^#{1,3}\s+(.+)$/);
+    if (heading) return <strong className="mascot-rich-heading" key={`block-${index}`}>{renderInline(heading[1], `heading-${index}`)}</strong>;
+    return <p key={`block-${index}`}>{renderInline(lines.join(' '), `paragraph-${index}`)}</p>;
+  })}</div>;
+}
+
 export function QuizStudyMascot({ question, selectedTexts, answerText }: { question: Question; selectedTexts: string[]; answerText: string }) {
   const [open, setOpen] = useState(false);
   const [hints, setHints] = useState<string[]>([]);
@@ -62,8 +93,8 @@ export function QuizStudyMascot({ question, selectedTexts, answerText }: { quest
       <header className="quiz-mascot-header"><span className="mascot-avatar"><Bot size={20}/></span><div><strong>Trợ lý học tập</strong><small>Đang học cùng bạn</small></div><button className="icon-button" aria-label="Đóng trợ lý" onClick={() => setOpen(false)}><X size={18}/></button></header>
       <div className="quiz-mascot-content">
         {!hints.length && !explanation && !error && <p className="mascot-welcome">Bạn muốn một gợi ý hay lời giải dễ hiểu cho câu này?</p>}
-        {hints.map((hint, index) => <article className="mascot-message hint-message" key={`${question.id}-${index}`}><small>GỢI Ý {index + 1}</small><p>{hint}</p></article>)}
-        {explanation && <article className="mascot-message explanation-message"><small>GIẢI THÍCH DỄ HIỂU</small><p>{explanation}</p></article>}
+        {hints.map((hint, index) => <article className="mascot-message hint-message" key={`${question.id}-${index}`}><small>GỢI Ý {index + 1}</small><AssistantText text={hint}/></article>)}
+        {explanation && <article className="mascot-message explanation-message"><small>GIẢI THÍCH DỄ HIỂU</small><AssistantText text={explanation}/></article>}
         {error && <div className="mascot-error" role="alert"><span>{error}</span><button className="btn-ghost" disabled={busy !== null} onClick={() => ask(retryAction)}>Thử lại</button></div>}
         {busy && <div className="mascot-loading"><LoaderCircle size={16} className="mascot-spinner"/>Đang suy nghĩ…</div>}
       </div>

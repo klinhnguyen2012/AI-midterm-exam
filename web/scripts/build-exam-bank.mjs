@@ -147,6 +147,11 @@ function isTopicGuessQuestion(stem) {
   return /(?:chon|choose|pick|select|identify|match)\s+(?:(?:the|mot)\s+)?(?:chu de|topic|theme)\b|(?:chu de nao|which topic|what topic)\b|(?:trich doan|doan trich|excerpt|passage).{0,50}(?:duoc xep|thuoc|gan voi|belongs to|classified as|mapped to).{0,30}(?:chu de|topic|theme)|noi dung nay.{0,40}(?:xep|thuoc).{0,30}(?:chu de|topic|theme)/i.test(text);
 }
 
+function isPersonalPreferenceQuestion(stem) {
+  const text = normalize(stem);
+  return /^(?:track chuyen sau cua ban la gi|what is your (?:ai )?track|which (?:ai )?track are you on)$/.test(text);
+}
+
 function isContextlessQuestion(question) {
   if (question.type === 'essay') return false;
   const stem = normalize(question.stem);
@@ -156,7 +161,8 @@ function isContextlessQuestion(question) {
 function removeUnusableGeneratedQuestions(bank) {
   bank.examSets = bank.examSets.filter(set => set.id === 'exam-01' || set.id === 'exam-02' || /^exam-(0[3-9]|1[0-9]|20)$/.test(set.id));
   const removedIds = new Set(bank.questions.filter(question =>
-    /^generated-(?:mcq|essay)-\d+$/i.test(question.id) || isTopicGuessQuestion(question.stem) || isContextlessQuestion(question),
+    /^generated-(?:mcq|essay)-\d+$/i.test(question.id) || isTopicGuessQuestion(question.stem)
+      || isPersonalPreferenceQuestion(question.stem) || isContextlessQuestion(question),
   ).map(question => question.id));
   bank.questions = bank.questions.filter(question => !removedIds.has(question.id));
   const questionsById = new Map(bank.questions.map(question => [question.id, question]));
@@ -362,7 +368,7 @@ function run() {
   assignStudyDays(bank.questions);
   const output = { ...bank, generatedExamQuestionCount: 0 };
   writeFileSync(outputPath, `${JSON.stringify(output, null, 2)}\n`);
-  console.log(`Giữ ${bank.examSets.length} đề có câu hỏi độc lập; đã loại ${removedGeneratedQuestions} câu sinh tự động từ ghi chú/trích đoạn thô.`);
+  console.log(`Giữ ${bank.examSets.length} đề; đã loại ${removedGeneratedQuestions} câu không phù hợp hoặc thiếu dữ kiện để chấm.`);
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) run();

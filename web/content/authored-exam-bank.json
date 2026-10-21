@@ -24494,7 +24494,7 @@
       "correctAnswers": [
         "B"
       ],
-      "explanation": "TNR thể hiện khả năng nhận ra output thực sự xấu; TNR thấp làm lỗi lọt qua, là rủi ro đáng lo nhất. TPR liên quan đến nhận diện output tốt, không phải bỏ lọt output xấu. Pass rate giống nhau không chứng minh hai bên đồng ý trên từng trace, và số lượng trace tự nó không đảm bảo calibration.\n\nGợi ý đáp án: TNR; thấp nghĩa là judge cho qua nhiều output lỗi",
+      "explanation": "Đáp án B đúng. Hãy tưởng tượng chuyên gia chia câu trả lời thành hai nhóm: tốt và lỗi. **TNR (True Negative Rate, tỷ lệ bắt đúng câu trả lời lỗi)** cho biết trong tất cả câu trả lời thật sự lỗi, judge phát hiện được bao nhiêu. TNR thấp nghĩa là nhiều câu trả lời lỗi bị đánh giá nhầm là đạt và có thể lọt tới người dùng.\n\n**TPR (True Positive Rate, tỷ lệ nhận đúng câu trả lời tốt)** cho biết trong tất cả câu trả lời thật sự tốt, judge nhận ra được bao nhiêu. TPR thấp khiến câu tốt bị chặn nhầm.\n\nHai bên cùng có pass rate 70% chỉ có nghĩa là tổng số câu được cho qua bằng nhau; họ vẫn có thể bất đồng ở từng câu.\n\nGợi ý đáp án: Chú ý TNR: trong nhóm câu trả lời thật sự lỗi, judge bắt được bao nhiêu; TNR thấp nghĩa là nhiều lỗi bị cho qua.",
       "topic": "Calibration của judge",
       "day": 27,
       "difficulty": "hard",

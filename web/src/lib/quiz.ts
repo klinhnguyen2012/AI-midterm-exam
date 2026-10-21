@@ -1,4 +1,4 @@
-import type { Attempt, Question } from './types';
+import type { Attempt, EssayGrade, Question } from './types';
 
 export function selectQuestions(questions: Question[], count: number, filters: { topic?: string; day?: number | 'all'; difficulty?: string; scoredOnly?: boolean } = {}): Question[] {
   const filtered = questions.filter(q => (!filters.scoredOnly || (q.correctAnswers !== null && q.verificationStatus === 'expert_verified')) && (!filters.topic || filters.topic === 'all' || q.topic === filters.topic) && (filters.day === undefined || filters.day === 'all' || q.day === filters.day) && (!filters.difficulty || filters.difficulty === 'all' || q.difficulty === filters.difficulty));
@@ -15,16 +15,21 @@ export function gradeMultipleChoice(selected: string[], correct: string[]): bool
   return selected.length === correct.length && new Set(selected).size === new Set(correct).size && correct.every(id => selected.includes(id));
 }
 
-export function scoreAttempt(questions: Question[], answers: Record<string, string[]>, options: { allowProposed?: boolean } = {}): { correct: number; incorrect: number; pending: number; total: number; score: number } {
-  let correct = 0, incorrect = 0, pending = 0;
+export function scoreAttempt(questions: Question[], answers: Record<string, string[]>, options: { allowProposed?: boolean; essayGrades?: Record<string, EssayGrade> } = {}): { correct: number; incorrect: number; pending: number; total: number; score: number } {
+  let correct = 0, incorrect = 0, pending = 0, partialEssayPoints = 0;
   for (const question of questions) {
     const given = answers[question.id];
+    if (question.type === 'essay') {
+      const grade = options.essayGrades?.[question.id];
+      if (grade && grade.maxScore > 0) partialEssayPoints += Math.max(0, Math.min(1, grade.score / grade.maxScore));
+      else pending++;
+      continue;
+    }
     const eligible = question.verificationStatus === 'expert_verified' || (options.allowProposed && question.verificationStatus === 'answer_proposed');
     if (!question.correctAnswers || !eligible || !given?.length) { pending++; continue; }
     if (gradeMultipleChoice(given, question.correctAnswers)) correct++; else incorrect++;
   }
-  const scored = correct + incorrect;
-  return { correct, incorrect, pending, total: questions.length, score: scored ? Math.round(correct / scored * 100) : 0 };
+  return { correct, incorrect, pending, total: questions.length, score: questions.length ? Math.round((correct + partialEssayPoints) / questions.length * 100) : 0 };
 }
 
 export function saveAttempt(attempt: Attempt, storage: Storage = localStorage): void {

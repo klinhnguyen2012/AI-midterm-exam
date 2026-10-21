@@ -26,8 +26,8 @@ describe('quiz grading and selection', () => {
     expect(gradeMultipleChoice(['A'], ['A', 'B'])).toBe(false);
     expect(gradeMultipleChoice(['B', 'A'], ['A', 'B'])).toBe(true);
   });
-  it('scores answered questions and leaves the rest pending in a partial submission', () => {
-    expect(scoreAttempt([q('one'),q('two'),q('three')],{one:['A'],two:['B']})).toMatchObject({correct:1,incorrect:1,pending:1,total:3,score:50});
+  it('uses the full question count as the score denominator in a partial submission', () => {
+    expect(scoreAttempt([q('one'),q('two'),q('three')],{one:['A'],two:['B']})).toMatchObject({correct:1,incorrect:1,pending:1,total:3,score:33});
   });
   it('drops duplicate IDs when loading an imported bank', () => {
     expect(loadQuestions([q('same'), q('same')])).toHaveLength(1);

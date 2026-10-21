@@ -9,7 +9,8 @@ export interface Question {
   sourceType?: 'past_exam_transcription' | 'generated_variant' | 'assistant_authored' | 'user_added';
   rawOcrText?: string;
 }
-export interface Attempt { id: string; startedAt: string; submittedAt: string; questionIds: string[]; answers: Record<string, string[]>; score: number; total: number; mode: 'practice' | 'exam'; examSetId?: string; }
+export interface EssayGrade { score: number; maxScore: number; feedback: string; }
+export interface Attempt { id: string; startedAt: string; submittedAt: string; questionIds: string[]; answers: Record<string, string[]>; score: number; total: number; mode: 'practice' | 'exam'; examSetId?: string; essayGrades?: Record<string, EssayGrade>; }
 export interface ExamSet {
   id: string; title: string; questionIds: string[]; total: number; mcqCount: number; essayCount: number;
   sourceSets: string[]; createdAt: string;

@@ -1,7 +1,7 @@
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import type { Plugin } from 'vite';
 
-type CoachAction = 'hint' | 'explain';
+type CoachAction = 'hint' | 'explain' | 'grade_essay';
 type CoachQuestion = {
   stem: string;
   options: { id: string; text: string }[];
@@ -16,6 +16,7 @@ type CoachRequest = {
   question: CoachQuestion;
   previousHints?: string[];
   answer?: { selectedTexts: string[]; answerText: string; correctAnswerText: string; explanation: string };
+  essayAnswer?: { answerText: string; referenceAnswer: string };
 };
 
 const MAX_BODY_BYTES = 24_000;
@@ -49,7 +50,7 @@ function cleanText(value: unknown, max = MAX_TEXT_LENGTH): string {
 }
 
 function parseRequest(value: unknown): CoachRequest | null {
-  if (!isRecord(value) || (value.action !== 'hint' && value.action !== 'explain') || !isRecord(value.question)) return null;
+  if (!isRecord(value) || !['hint', 'explain', 'grade_essay'].includes(String(value.action)) || !isRecord(value.question)) return null;
   const q = value.question;
   if (typeof q.stem !== 'string' || !Array.isArray(q.options)) return null;
   const question: CoachQuestion = {
@@ -63,7 +64,7 @@ function parseRequest(value: unknown): CoachRequest | null {
     sourceFiles: Array.isArray(q.sourceFiles) ? q.sourceFiles.slice(0, 4).map(file => cleanText(file, 300)) : [],
     sourcePages: Array.isArray(q.sourcePages) ? q.sourcePages.slice(0, 8).filter(page => typeof page === 'number' && Number.isFinite(page)) : [],
   };
-  const request: CoachRequest = { action: value.action, question };
+  const request: CoachRequest = { action: value.action as CoachAction, question };
   if (request.action === 'hint') {
     request.previousHints = Array.isArray(value.previousHints) ? value.previousHints.slice(-4).map(hint => cleanText(hint, 1000)) : [];
   }
@@ -75,8 +76,15 @@ function parseRequest(value: unknown): CoachRequest | null {
       explanation: cleanText(value.answer.explanation, 6000),
     };
   }
+  if (request.action === 'grade_essay' && isRecord(value.answer)) {
+    request.essayAnswer = {
+      answerText: cleanText(value.answer.answerText, 6000),
+      referenceAnswer: cleanText(value.answer.referenceAnswer, 6000),
+    };
+  }
   if (!question.stem || question.stem.length > MAX_TEXT_LENGTH) return null;
   if (request.action === 'explain' && !request.answer) return null;
+  if (request.action === 'grade_essay' && (!request.essayAnswer?.answerText.trim() || !request.essayAnswer.referenceAnswer.trim())) return null;
   return request;
 }
 
@@ -87,6 +95,10 @@ function makePrompt(request: CoachRequest): string {
   const context = `Chủ đề: ${question.topic || 'không rõ'}\nCâu hỏi: ${question.stem}\n${question.options.length ? `Các lựa chọn:\n${question.options.map(item => `${item.id}. ${item.text}`).join('\n')}\n` : ''}${source ? `Nguồn: ${source}\n` : ''}${evidence}`;
   if (request.action === 'hint') {
     return `Bạn là mascot gia sư thân thiện cho người mới học AI, nói tiếng Việt tự nhiên, ngắn gọn và dành cho người không chuyên. Đưa đúng MỘT gợi ý tiếp theo, giúp người học tự suy luận; không nêu đáp án, không nói phương án đúng, không giải hộ. Nếu đã có gợi ý trước, đưa thêm một bước mới nhưng vẫn chưa bật mí. Giải nghĩa mọi chữ viết tắt hoặc thuật ngữ chuyên môn ngay lần đầu xuất hiện bằng lời đơn giản; nếu hữu ích, thêm một ví dụ đời thường ngắn. Không dùng riêng chữ viết tắt như TPR/TNR mà không giải nghĩa. Nếu nguồn không đủ, hãy nói rõ và chỉ gợi ý cách suy nghĩ từ dữ kiện câu hỏi.\n\n${context}\nGợi ý trước: ${(request.previousHints ?? []).join(' | ') || '(chưa có)'}`;
+  }
+  if (request.action === 'grade_essay') {
+    const answer = request.essayAnswer!;
+    return `Bạn là giám khảo chấm bài tự luận cho người học. Chấm công bằng theo tiêu chí và đáp án tham khảo đã cung cấp, không đòi hỏi người học phải dùng đúng nguyên văn. Thang điểm cố định 0–10: chia đều điểm cho các ý quan trọng trong đáp án tham khảo; cho điểm một phần khi ý đúng nhưng thiếu giải thích hoặc ví dụ; không cho điểm ý sai hoặc không có trong bài. Chỉ đánh giá nội dung liên quan, không trừ điểm vì lỗi chính tả nhỏ. Nếu câu trả lời để trống thì 0 điểm. Trả về DUY NHẤT JSON hợp lệ dạng {"score": number, "feedback": "..."}; score từ 0 đến 10, làm tròn 0.5 điểm. Feedback tiếng Việt ngắn gọn: nêu điểm đạt được, thiếu sót chính và cách cải thiện. Đây là điểm tham khảo tự động.\n\nCâu hỏi: ${question.stem}\nĐáp án đề xuất và tiêu chí chấm: ${answer.referenceAnswer}\nBài làm của người học: ${answer.answerText}`;
   }
   const answer = request.answer!;
   return `Bạn là gia sư giải thích AI cho người không chuyên, nói tiếng Việt tự nhiên, rõ ràng và súc tích. Trả lời tối đa 140 từ. Mở đầu bằng nhận xét ngắn về câu trả lời; giải thích ý chính bằng tối đa 3 ý ngắn; chỉ thêm một ví dụ đời thường nếu thực sự giúp hiểu bài. Người học không rành công nghệ: mỗi chữ viết tắt phải được giải nghĩa đầy đủ bằng tiếng Việt ngay lần đầu, rồi giải thích tác dụng của nó trong chính câu hỏi bằng ngôn ngữ đời thường. Ví dụ: TNR là tỷ lệ bắt đúng câu trả lời lỗi; TPR là tỷ lệ nhận đúng câu trả lời tốt. Không chỉ nhắc tên chỉ số rồi nói “thấp là xấu”. Nếu có hai chỉ số dễ nhầm, hãy đối chiếu rõ chúng đang đếm nhóm nào và nêu hệ quả thực tế. Không lặp lại đề bài hay kết luận dài dòng. Với tự luận, đây là góp ý học tập chứ không tuyên bố điểm số khách quan. Chỉ khẳng định điều được dữ liệu hoặc trích dẫn hỗ trợ; nếu thiếu bằng chứng thì nói rõ. Không bịa nội dung slide. Có thể dùng Markdown cơ bản (**đậm**, danh sách ngắn).\n\n${context}\nNgười học chọn: ${answer.selectedTexts.join(' | ') || '(không chọn phương án)'}\nCâu trả lời tự luận: ${answer.answerText || '(không có)'}\nĐáp án/gợi ý hiện có: ${answer.correctAnswerText || '(chưa có đáp án được ghi nhận)'}\nGiải thích hiện có: ${answer.explanation || '(chưa có)'}`;
@@ -108,7 +120,7 @@ export async function handleQuizCoach(req: IncomingMessage & { body?: unknown },
     const response = await fetch('https://api.openai.com/v1/responses', {
       method: 'POST',
       headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ model, store: false, max_output_tokens: request.action === 'hint' ? 220 : 900, input: makePrompt(request) }),
+      body: JSON.stringify({ model, store: false, max_output_tokens: request.action === 'hint' ? 220 : request.action === 'grade_essay' ? 350 : 900, input: makePrompt(request) }),
     });
     const result = await response.json() as { output?: { content?: { type?: string; text?: string }[] }[] };
     if (!response.ok) {

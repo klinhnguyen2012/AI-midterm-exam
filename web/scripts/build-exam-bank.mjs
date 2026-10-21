@@ -11,6 +11,7 @@ const outputPath = resolve(webRoot, 'src/data/exam_bank_seed.json');
 const exam01ProposalsPath = resolve(webRoot, 'content/exam01-answer-proposals.json');
 const exam02ProposalsPath = resolve(webRoot, 'content/exam02-answer-proposals.json');
 const authoredExamBankPath = resolve(webRoot, 'content/authored-exam-bank.json');
+const answerBackfillPath = resolve(webRoot, 'content/answer-key-backfill.json');
 const generatedAt = '2026-10-20T00:00:00.000Z';
 
 function applyExam01Proposals(questions, examSets) {
@@ -65,6 +66,37 @@ function mergeAuthoredExamBank(bank) {
     if (existingExamIds.has(set.id)) throw new Error(`ID đề bị trùng: ${set.id}`);
     existingExamIds.add(set.id);
     bank.examSets.push(set);
+  }
+  return bank;
+}
+
+function applyAnswerKeyBackfill(bank) {
+  if (!existsSync(answerBackfillPath)) return bank;
+  const overlay = JSON.parse(readFileSync(answerBackfillPath, 'utf8'));
+  if (!Array.isArray(overlay.answers)) throw new Error('Overlay đáp án phải có mảng answers.');
+  const questionsById = new Map(bank.questions.map(question => [question.id, question]));
+  const seen = new Set();
+  for (const answer of overlay.answers) {
+    if (!answer || typeof answer.id !== 'string' || seen.has(answer.id)) throw new Error('Overlay có ID câu hỏi thiếu hoặc bị lặp.');
+    seen.add(answer.id);
+    const question = questionsById.get(answer.id);
+    if (!question || question.type === 'essay' || question.correctAnswers?.length) throw new Error(`Không thể áp dụng backfill cho câu ${answer.id}.`);
+    const optionIds = question.options.map(option => option.id);
+    if (new Set(optionIds).size !== optionIds.length) throw new Error(`Các lựa chọn của ${answer.id} có ID bị lặp.`);
+    if (!Array.isArray(answer.correctAnswers) || !answer.correctAnswers.length || new Set(answer.correctAnswers).size !== answer.correctAnswers.length || answer.correctAnswers.some(id => !optionIds.includes(id))) {
+      throw new Error(`Đáp án backfill của ${answer.id} không khớp ID lựa chọn.`);
+    }
+    if ((question.type === 'single_choice' || question.type === 'true_false') && answer.correctAnswers.length !== 1) {
+      throw new Error(`Câu ${answer.id} chỉ được có một đáp án đúng.`);
+    }
+    if (question.type === 'multiple_choice' && answer.correctAnswers.length < 1) throw new Error(`Câu ${answer.id} cần ít nhất một đáp án đúng.`);
+    if (typeof answer.explanation !== 'string' || !answer.explanation.trim() || !Number.isFinite(answer.confidence) || answer.confidence < 0 || answer.confidence > 1) {
+      throw new Error(`Giải thích hoặc độ tin cậy của ${answer.id} không hợp lệ.`);
+    }
+    question.correctAnswers = answer.correctAnswers;
+    question.explanation = answer.explanation.trim();
+    question.verificationStatus = 'answer_proposed';
+    question.reviewerNotes = `Đáp án đề xuất được điền một lần bằng ${overlay.model || 'LLM'} (độ tin cậy ${Math.round(answer.confidence * 100)}%); chưa được chuyên gia xác minh.`;
   }
   return bank;
 }
@@ -376,6 +408,7 @@ function run() {
   applyExam01Proposals(bank.questions, bank.examSets);
   applyExam02Proposals(bank.questions);
   mergeAuthoredExamBank(bank);
+  applyAnswerKeyBackfill(bank);
   const removedGeneratedQuestions = removeUnusableGeneratedQuestions(bank);
   restoreExam01Length(bank);
   assignStudyDays(bank.questions);

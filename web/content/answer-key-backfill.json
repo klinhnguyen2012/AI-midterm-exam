@@ -1,0 +1,421 @@
+{
+  "model": "gpt-6-luna",
+  "generatedAt": "2026-10-21T11:41:01.071Z",
+  "answers": [
+    {
+      "id": "vinunitest-001",
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Phân loại email vào 5 nhóm là bài toán phân loại với các nhãn đầu ra cố định, phù hợp với AI phân biệt (discriminative AI).",
+      "confidence": 0.99
+    },
+    {
+      "id": "vinunitest-002",
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Nếu tài liệu đầu vào lỗi, thiếu hoặc đã cũ, agent có thể truy xuất và trả lời sai dù dùng model mạnh. Nâng cấp model không tự làm dữ liệu bẩn trở nên đúng.",
+      "confidence": 0.97
+    },
+    {
+      "id": "vinunitest-003",
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "API cho agent cần kiểm soát quyền truy cập và lưu lượng, xử lý timeout, hỗ trợ trải nghiệm phản hồi phù hợp và quản lý phiên bản để tránh phá vỡ tích hợp cũ.",
+      "confidence": 0.99
+    },
+    {
+      "id": "vinunitest-004",
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Prompt injection dùng nội dung đầu vào có chỉ dẫn độc hại để tìm cách khiến model bỏ qua chỉ dẫn ưu tiên và thực hiện hành vi không mong muốn.",
+      "confidence": 0.98
+    },
+    {
+      "id": "vinunitest-006",
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Trong mô hình supervisor-worker, supervisor điều phối: nhận nhiệm vụ, chuyển cho worker phù hợp và tổng hợp kết quả.",
+      "confidence": 0.99
+    },
+    {
+      "id": "vinunitest-007",
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "Nếu câu trả lời đúng nhưng đã lỗi thời, cần kiểm tra độ mới của dữ liệu được xuất bản hoặc cache, thay vì chỉ tập trung vào chất lượng model.",
+      "confidence": 0.97
+    },
+    {
+      "id": "vinunitest-008",
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Grounding yêu cầu câu trả lời dựa trên ngữ cảnh đã truy xuất, nêu nguồn khi phù hợp và thừa nhận khi không có đủ bằng chứng.",
+      "confidence": 0.99
+    },
+    {
+      "id": "vinunitest-009",
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "TTFT, chất lượng, chi phí mỗi request và drift giúp theo dõi hiệu năng, giá trị và sự thay đổi của model hoặc dữ liệu; CPU và uptime vẫn hữu ích nhưng không đặc thù cho AI.",
+      "confidence": 0.94
+    },
+    {
+      "id": "vinunitest-010",
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Phân tích sentiment trên lượng phản hồi lớn là việc khó xử lý thủ công và có giá trị khi tự động hóa. Các lựa chọn còn lại chủ yếu là quy tắc cố định, thường không cần AI.",
+      "confidence": 0.96
+    },
+    {
+      "id": "vinunitest-011",
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "Semantic caching dùng lại kết quả cho các truy vấn có ý nghĩa tương tự, kể cả khi câu chữ khác nhau. Lựa chọn A có vẻ gộp cả mô tả cache chính xác và cache ngữ nghĩa; phần khớp với câu hỏi là cache ngữ nghĩa.",
+      "confidence": 0.92
+    },
+    {
+      "id": "vinunitest-012",
+      "correctAnswers": [
+        "C"
+      ],
+      "explanation": "Kịch bản cơ sở thực tế, có giả định và mốc thời gian rõ ràng, hữu ích hơn để ước tính ROI khả thi và ra quyết định so với kịch bản quá lạc quan hoặc bi quan.",
+      "confidence": 0.94
+    },
+    {
+      "id": "vinunitest-013",
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Prompt này nêu rõ mục đích email, tình huống, giọng điệu, độ dài và lời kêu gọi hành động nên hướng dẫn model cụ thể hơn.",
+      "confidence": 0.98
+    },
+    {
+      "id": "vinunitest-014",
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Phát biểu đảo ngược quan hệ: Deep Learning là một nhánh của Machine Learning, không phải ngược lại.",
+      "confidence": 0.99
+    },
+    {
+      "id": "vinunitest-015",
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "LLM-as-a-Judge có thể hỗ trợ đánh giá, nhưng không thay thế hoàn toàn con người trong mọi trường hợp; đánh giá của model cũng có thể sai hoặc thiên lệch.",
+      "confidence": 0.99
+    },
+    {
+      "id": "vinunitest-016",
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Prompt injection và jailbreaking đều nhằm vượt qua các ràng buộc, nhưng không hoàn toàn đồng nghĩa: prompt injection thường khai thác chỉ dẫn trong ngữ cảnh, còn jailbreaking là cách rộng hơn để khiến model bỏ qua giới hạn.",
+      "confidence": 0.91
+    },
+    {
+      "id": "vinunitest-017",
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Khi RAG trả lời sai, nên kiểm tra dữ liệu, truy xuất và cách dùng ngữ cảnh trước. Đổi sang model mạnh hơn không nhất thiết xử lý được nguyên nhân gốc.",
+      "confidence": 0.98
+    },
+    {
+      "id": "vinunitest-033",
+      "correctAnswers": [
+        "B",
+        "C"
+      ],
+      "explanation": "RAG phù hợp khi cần truy xuất thông tin từ kho tài liệu lớn hoặc dữ liệu thay đổi thường xuyên. Nội dung lựa chọn C có vẻ ghép hai ý: thuật ngữ y tế chuyên biệt và giá sản phẩm real-time; ý về giá cập nhật liên tục phù hợp với RAG, còn ý về học sâu thuật ngữ có thể hợp với fine-tuning hơn.",
+      "confidence": 0.78
+    },
+    {
+      "id": "vinunitest-034",
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "Kiểm tra đầu vào và quét PII ở đầu ra đều là guardrail hợp lệ. Lựa chọn B bị gộp nhiều ý: tăng temperature không phải biện pháp chống jailbreak, dù human-in-the-loop và rate limiting là các biện pháp hợp lệ.",
+      "confidence": 0.86
+    },
+    {
+      "id": "vinunitest-036",
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Trong các lựa chọn, thiếu trường parameters trong tool schema là nguyên nhân kỹ thuật hợp lý nếu model không biết cần truyền đối số nào. Tuy nhiên, câu hỏi không cung cấp tình huống mô tả, nên đáp án chưa thể xác định chắc chắn.",
+      "confidence": 0.48
+    },
+    {
+      "id": "vinunitest-037",
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "BLEU chủ yếu đo mức độ trùng khớp từ ngữ với câu trả lời tham chiếu, không trực tiếp đo việc agent có giải quyết được vấn đề của khách hàng hay không.",
+      "confidence": 0.98
+    },
+    {
+      "id": "vinunitest-043",
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Trong các lựa chọn, B mô tả các biện pháp quản trị thường gắn với hệ thống AI rủi ro cao. Tuy nhiên, không có trích dẫn văn bản luật kèm theo để xác nhận chính xác các yêu cầu pháp lý cụ thể.",
+      "confidence": 0.66
+    },
+    {
+      "id": "vinunitest-044",
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "C-suite thường cần hiểu tác động kinh doanh như tiết kiệm chi phí, tăng doanh thu và giảm rủi ro, cùng con số và thời hạn cụ thể.",
+      "confidence": 0.98
+    },
+    {
+      "id": "vinunitest-045",
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Giả định không được kiểm chứng có thể khiến nhóm xây sản phẩm cho nhu cầu không tồn tại hoặc nhắm sai nhóm khách hàng.",
+      "confidence": 0.99
+    },
+    {
+      "id": "vinunitest-046",
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Việc áp dụng AI còn phụ thuộc vào con người và quy trình: cần đào tạo, tích hợp workflow và xây dựng niềm tin, nên thường chậm hơn dự kiến.",
+      "confidence": 0.98
+    },
+    {
+      "id": "vinunitest-047",
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Ngoài quy mô thị trường, cần xem xét thời điểm thị trường sẵn sàng, lợi thế cạnh tranh, rào cản chấp nhận và quy định liên quan.",
+      "confidence": 0.98
+    },
+    {
+      "id": "vinunitest-048",
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Cần biết chi phí hoặc thời gian hiện tại của quy trình để so sánh với phương án có AI và ước tính phần cải thiện thực tế.",
+      "confidence": 0.99
+    },
+    {
+      "id": "vinunitest-049",
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "EU AI Act thường được mô tả với bốn nhóm rủi ro: không đáng kể/tối thiểu, hạn chế, cao và không thể chấp nhận.",
+      "confidence": 0.97
+    },
+    {
+      "id": "vinunitest-052",
+      "correctAnswers": [
+        "A",
+        "B",
+        "D"
+      ],
+      "explanation": "Xử lý song song, chia nhỏ các nhiệm vụ độc lập, hoặc cần các vai trò chuyên biệt đều có thể biện minh cho nhiều agent. Việc context thường xuyên gần đầy cũng có thể là dấu hiệu cần chia nhỏ công việc, nhưng tự nó chưa đủ để quyết định.",
+      "confidence": 0.84
+    },
+    {
+      "id": "vinunitest-057",
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Trong các lựa chọn, selection bias là nguyên nhân phù hợp nếu các nguồn phản hồi chủ yếu ghi nhận khách hàng gặp vấn đề. Tuy nhiên, câu hỏi thiếu phần mô tả dữ liệu nên kết luận này chưa chắc chắn.",
+      "confidence": 0.42
+    },
+    {
+      "id": "vinunitest-062",
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "VRAM cần đủ để chứa trọng số model và bộ nhớ KV cache cho các request đồng thời; thiếu VRAM có thể khiến model không chạy hoặc giảm khả năng phục vụ.",
+      "confidence": 0.98
+    },
+    {
+      "id": "vinunitest-063",
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Trích xuất model, đầu độc dữ liệu huấn luyện, ví dụ đối kháng và model weights bị xâm phạm là các nguy cơ đặc thù đáng chú ý trong hạ tầng AI.",
+      "confidence": 0.98
+    },
+    {
+      "id": "vinunitest-064",
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Data Observability theo dõi tình trạng pipeline và chất lượng dữ liệu, như độ mới, độ đầy đủ và thay đổi schema, chứ không chỉ hiệu năng hạ tầng.",
+      "confidence": 0.98
+    },
+    {
+      "id": "vinunitest-065",
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Dùng spot cho workload có thể chịu gián đoạn, reserved cho tải production ổn định và auto-scaling để giảm thời gian tài nguyên nhàn rỗi là cách cân bằng chi phí và độ tin cậy.",
+      "confidence": 0.95
+    },
+    {
+      "id": "vinunitest-066",
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Quantization giảm dung lượng bộ nhớ và có thể tăng thông lượng, thường phải đánh đổi bằng một mức suy giảm chất lượng nhất định.",
+      "confidence": 0.99
+    },
+    {
+      "id": "vinunitest-067",
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Lakehouse kết hợp lưu trữ linh hoạt, chi phí thấp của data lake với các khả năng quản lý và phân tích thường thấy ở data warehouse.",
+      "confidence": 0.98
+    },
+    {
+      "id": "vinunitest-068",
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Eval gate tự động kiểm tra chất lượng sau thay đổi và chỉ cho triển khai khi các chỉ số đạt ngưỡng quy định.",
+      "confidence": 0.98
+    },
+    {
+      "id": "vinunitest-069",
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Batching, KV cache, speculative decoding và quantization có thể giảm độ trễ hoặc cải thiện hiệu suất phục vụ; tác động cụ thể tùy workload và cách triển khai.",
+      "confidence": 0.91
+    },
+    {
+      "id": "vinunitest-070",
+      "correctAnswers": [
+        "B",
+        "C"
+      ],
+      "explanation": "RAG phù hợp với kho tài liệu lớn cần truy xuất và dữ liệu catalog cập nhật liên tục. Lựa chọn C có vẻ gộp ý về thuật ngữ y tế với ý về giá real-time; ý về giá phù hợp với RAG, còn ý về học sâu thuật ngữ có thể hợp với fine-tuning hơn.",
+      "confidence": 0.78
+    },
+    {
+      "id": "vinunitest-071",
+      "correctAnswers": [
+        "A",
+        "B"
+      ],
+      "explanation": "Tỷ lệ lỗi và tỷ lệ hoàn thành tác vụ đều là metric cần theo dõi. Phần câu hỏi cũng nêu latency và chi phí token là metric hữu ích; số lần cập nhật weights mỗi ngày không phải chỉ số vận hành cốt lõi cho mọi agent.",
+      "confidence": 0.93
+    },
+    {
+      "id": "vinunitest-075",
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "Chunk quá lớn có thể làm loãng tín hiệu liên quan trong từng đoạn, khiến truy xuất khó tìm được nội dung cần thiết. Tuy nhiên, mô tả tình huống không được cung cấp đầy đủ nên đây chỉ là lựa chọn có vẻ phù hợp nhất trong các đáp án còn lại.",
+      "confidence": 0.46
+    },
+    {
+      "id": "vinunitest-080",
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Các tác vụ cần lập kế hoạch phức tạp, quay lại sửa bước trước hoặc khám phá nhiều hướng giải quyết có thể vượt quá khả năng của một agent đơn giản.",
+      "confidence": 0.97
+    },
+    {
+      "id": "vinunitest-081",
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "LoRA giữ nguyên trọng số nền đã huấn luyện và chỉ cập nhật các adapter nhỏ, giúp giảm lượng tham số cần tinh chỉnh.",
+      "confidence": 0.99
+    },
+    {
+      "id": "vinunitest-082",
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Faithfulness đo mức độ các khẳng định trong câu trả lời được hỗ trợ bởi ngữ cảnh truy xuất, thay vì đo độ giống với ground truth.",
+      "confidence": 0.99
+    },
+    {
+      "id": "vinunitest-083",
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "Năm pattern được liệt kê là prompt chaining, routing, parallelization, orchestrator-subagents và evaluator-optimizer. Có vẻ phần văn bản này bị ghép vào lựa chọn A.",
+      "confidence": 0.95
+    },
+    {
+      "id": "vinunitest-084",
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Dữ liệu production thường nhiều nhiễu, không nhất quán và có tình huống ngoại lệ hơn dữ liệu demo, nên cách RAG cơ bản có thể không đủ vững.",
+      "confidence": 0.96
+    },
+    {
+      "id": "vinunitest-085",
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Các kỹ thuật trước bước truy xuất có thể diễn đạt lại hoặc mở rộng truy vấn, tạo truy vấn giả định bằng HyDE và định tuyến truy vấn theo ý định.",
+      "confidence": 0.98
+    },
+    {
+      "id": "vinunitest-086",
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Context engineering giúp chọn lọc và sắp xếp thông tin phù hợp trong cửa sổ ngữ cảnh có giới hạn, thay vì chỉ tăng dung lượng hoặc nạp toàn bộ lịch sử.",
+      "confidence": 0.99
+    },
+    {
+      "id": "vinunitest-087",
+      "correctAnswers": [
+        "A"
+      ],
+      "explanation": "Reflexion bổ sung bước tự đánh giá kết quả và dùng phản hồi đó để cải thiện vòng tiếp theo. Lựa chọn A dường như ghép thêm một ý không liên quan về gọi song song.",
+      "confidence": 0.91
+    },
+    {
+      "id": "vinunitest-088",
+      "correctAnswers": [
+        "A",
+        "B",
+        "D"
+      ],
+      "explanation": "Xử lý song song, các nhiệm vụ độc lập, context thường xuyên gần giới hạn và vai trò chuyên biệt đều có thể là lý do cân nhắc multi-agent. Chi phí model cao tự nó không phải lý do đủ để chuyển kiến trúc.",
+      "confidence": 0.84
+    },
+    {
+      "id": "vinunitest-089",
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Định dạng đầu ra, các giới hạn rõ ràng và ví dụ mẫu đều giúp system prompt cụ thể hơn. Viết toàn bộ chỉ dẫn bằng chữ in hoa không phải best practice nói chung.",
+      "confidence": 0.91
+    },
+    {
+      "id": "vinunitest-094",
+      "correctAnswers": [
+        "B"
+      ],
+      "explanation": "Nếu tool schema thiếu trường parameters, model có thể không biết cần cung cấp các đối số nào. Dù vậy, câu hỏi không nêu tình huống đi kèm nên kết luận dựa trên các lựa chọn hiện có.",
+      "confidence": 0.61
+    }
+  ]
+}

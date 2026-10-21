@@ -7,6 +7,8 @@
     "generate:exam-bank": "node scripts/generate-exam-bank.mjs",
     "generate:comprehensive-exams": "node scripts/generate-exam-bank.mjs --start-exam=11 --count=10 --all-days",
     "prepare:data": "node scripts/prepare-data.mjs",
+    "prebackfill:answers": "npm run prepare:data",
+    "backfill:answers": "node scripts/backfill-answer-keys.mjs",
     "predev": "npm run prepare:data",
     "dev": "vite",
     "prebuild": "npm run prepare:data",

@@ -83,3 +83,27 @@
 .full-lesson-page .markdown-lite p{margin:5px 0}
 .full-lesson-page .markdown-lite pre{white-space:pre-wrap;overflow-wrap:anywhere}
 .full-lesson-content>small{display:block;color:var(--muted);font-size:10px;line-height:1.4}
+/* Mobile layout for practice setup and a visible appearance control. */
+.theme-quick{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:40px;padding:0 11px;border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--text);font:600 12px system-ui,sans-serif;cursor:pointer}
+.theme-quick:hover{background:var(--surface-2)}
+@media(max-width:760px){
+  .page-content{box-sizing:border-box;min-width:0}
+  .practice-layout{width:100%;min-width:0;grid-template-columns:minmax(0,1fr);gap:12px}
+  .practice-layout>* ,.setup-card{box-sizing:border-box;min-width:0;max-width:100%}
+  .setup-card{width:100%;padding:15px}
+  .count-options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+  .count-options button{min-width:0;padding:10px 5px;white-space:nowrap}
+  .count-options button small{margin-left:2px}
+  .field-grid{grid-template-columns:minmax(0,1fr);gap:3px}
+  .field-label select,.field-label input,.field-label textarea{box-sizing:border-box;width:100%;min-width:0}
+  .mode-select{grid-template-columns:minmax(0,1fr);gap:9px;margin:17px 0}
+  .mode-card{min-width:0;min-height:64px;padding:12px}
+  .mode-card span{min-width:0}
+  .mode-card small{line-height:1.4}
+  .setup-footer{align-items:stretch;flex-direction:column;gap:10px}
+  .setup-footer .btn-primary{width:100%;min-height:46px;white-space:normal}
+  .topbar{box-sizing:border-box;width:100%;padding:0 10px}
+  .top-actions{gap:7px;flex-shrink:0}
+  .top-actions .help-button{display:none}
+  .theme-quick{min-height:40px;padding:0 10px}
+}

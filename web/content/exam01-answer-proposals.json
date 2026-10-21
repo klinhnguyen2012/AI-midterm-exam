@@ -1,7 +1,7 @@
 {
   "middle_test-003": {
-    "correctAnswers": null,
-    "explanation": "Gợi ý trả lời: chọn track chuyên sâu bạn đang theo học (AI Applications, AI Infrastructure hoặc AI Product). Đây là câu hỏi cá nhân hóa nên không có một phương án đúng chung để chấm."
+    "correctAnswers": ["C"],
+    "explanation": "Đáp án mẫu đề xuất: C — AI Product. Đây là câu hỏi cá nhân hóa, nên nếu bạn đang học AI Applications hoặc AI Infrastructure thì chọn track thực tế của mình; đáp án C chỉ là phương án mẫu để đề không bị trống."
   },
   "middle_test-001": {
     "correctAnswers": [

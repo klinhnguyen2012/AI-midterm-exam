@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -10,6 +10,7 @@ const inputPath = resolve(sourceRoot, '05_data/exam_bank_seed.json');
 const outputPath = resolve(webRoot, 'src/data/exam_bank_seed.json');
 const exam01ProposalsPath = resolve(webRoot, 'content/exam01-answer-proposals.json');
 const exam02ProposalsPath = resolve(webRoot, 'content/exam02-answer-proposals.json');
+const authoredExamBankPath = resolve(webRoot, 'content/authored-exam-bank.json');
 const generatedAt = '2026-10-20T00:00:00.000Z';
 
 function applyExam01Proposals(questions, examSets) {
@@ -48,6 +49,24 @@ function applyExam02Proposals(questions) {
   for (const question of proposals.additionalQuestions) {
     if (!questions.some(item => item.id === question.id)) questions.push(question);
   }
+}
+
+function mergeAuthoredExamBank(bank) {
+  if (!existsSync(authoredExamBankPath)) return bank;
+  const authored = JSON.parse(readFileSync(authoredExamBankPath, 'utf8'));
+  const existingIds = new Set(bank.questions.map(question => question.id));
+  const existingExamIds = new Set(bank.examSets.map(set => set.id));
+  for (const question of authored.questions ?? []) {
+    if (existingIds.has(question.id)) throw new Error(`ID câu hỏi bị trùng: ${question.id}`);
+    existingIds.add(question.id);
+    bank.questions.push(question);
+  }
+  for (const set of authored.examSets ?? []) {
+    if (existingExamIds.has(set.id)) throw new Error(`ID đề bị trùng: ${set.id}`);
+    existingExamIds.add(set.id);
+    bank.examSets.push(set);
+  }
+  return bank;
 }
 
 function inferStudyDay(question) {
@@ -135,7 +154,7 @@ function isContextlessQuestion(question) {
 }
 
 function removeUnusableGeneratedQuestions(bank) {
-  bank.examSets = bank.examSets.filter(set => set.id === 'exam-01' || set.id === 'exam-02');
+  bank.examSets = bank.examSets.filter(set => set.id === 'exam-01' || set.id === 'exam-02' || /^exam-(0[3-9]|1[0-9]|20)$/.test(set.id));
   const removedIds = new Set(bank.questions.filter(question =>
     /^generated-(?:mcq|essay)-\d+$/i.test(question.id) || isTopicGuessQuestion(question.stem) || isContextlessQuestion(question),
   ).map(question => question.id));
@@ -338,6 +357,7 @@ function run() {
   const bank = JSON.parse(readFileSync(inputPath, 'utf8'));
   applyExam01Proposals(bank.questions, bank.examSets);
   applyExam02Proposals(bank.questions);
+  mergeAuthoredExamBank(bank);
   const removedGeneratedQuestions = removeUnusableGeneratedQuestions(bank);
   assignStudyDays(bank.questions);
   const output = { ...bank, generatedExamQuestionCount: 0 };

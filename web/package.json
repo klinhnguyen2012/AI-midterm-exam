@@ -4,6 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "generate:exam-bank": "node scripts/generate-exam-bank.mjs",
+    "generate:comprehensive-exams": "node scripts/generate-exam-bank.mjs --start-exam=11 --count=10 --all-days",
     "prepare:data": "node scripts/prepare-data.mjs",
     "predev": "npm run prepare:data",
     "dev": "vite",

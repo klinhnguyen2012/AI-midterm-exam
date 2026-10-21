@@ -1,9 +1,14 @@
 node_modules/
 web/node_modules/
 web/dist/
+.venv/
+.env
+.env.*
+!.env.example
 web/.env
 web/.env.*
 web/public/dataset/
 web/src/data/
+web/content/.authored-exam-bank-progress.json
 AI_Thuc_Chien_K4_Midterm/
 *.zip

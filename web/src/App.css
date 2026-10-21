@@ -107,3 +107,14 @@
   .top-actions .help-button{display:none}
   .theme-quick{min-height:40px;padding:0 10px}
 }
+
+/* Let the exam page scroll as a document on phones; keep the bottom nav fixed. */
+@media(max-width:760px){
+  .main-area:has(.exam-shell){height:auto;min-height:100dvh;overflow:visible}
+  .main-area:has(.exam-shell)>.page-content{flex:0 0 auto;min-height:0;height:auto;overflow:visible;padding:8px 10px calc(18px + env(safe-area-inset-bottom))}
+  .main-area:has(.exam-shell)>.page-content>.exam-shell{flex:0 0 auto;height:auto;min-height:0;overflow:visible;padding:5px 0}
+  .exam-grid{flex:0 0 auto;min-height:0;grid-template-rows:auto;overflow:visible;gap:9px}
+  .question-card{grid-row:auto;min-height:0;max-height:none;overflow:visible;overscroll-behavior:auto}
+  .question-controls{position:static;margin:14px -11px -11px;padding:9px 11px 11px}
+  .exam-sidebar{grid-row:auto}
+}

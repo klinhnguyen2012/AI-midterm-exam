@@ -11,6 +11,10 @@ export async function requestQuizCoach(payload: QuizCoachRequest): Promise<strin
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
   });
+  const contentType = response.headers.get('content-type') ?? '';
+  if (!contentType.includes('application/json')) {
+    throw new Error('Máy chủ chưa trả lời đúng định dạng. Hãy tải lại trang rồi thử lại nhé.');
+  }
   const result = await response.json() as { text?: string; error?: string };
   if (!response.ok || !result.text) throw new Error(result.error || 'Mascot chưa trả lời được. Thử lại nhé.');
   return result.text;

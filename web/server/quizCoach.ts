@@ -28,7 +28,8 @@ function send(res: ServerResponse, status: number, payload: unknown) {
   res.end(JSON.stringify(payload));
 }
 
-async function readBody(req: IncomingMessage): Promise<unknown> {
+async function readBody(req: IncomingMessage & { body?: unknown }): Promise<unknown> {
+  if (req.body !== undefined) return req.body;
   const chunks: Buffer[] = [];
   let size = 0;
   for await (const chunk of req) {
@@ -91,40 +92,47 @@ function makePrompt(request: CoachRequest): string {
   return `Bạn là gia sư giải thích AI cho người không chuyên, nói tiếng Việt tự nhiên và súc tích. Trả lời tối đa 100 từ. Mở đầu bằng nhận xét ngắn về câu trả lời; giải thích ý chính bằng tối đa 3 ý ngắn; chỉ thêm một ví dụ đời thường nếu thực sự giúp hiểu bài. Không lặp lại đề bài hay kết luận dài dòng. Với tự luận, đây là góp ý học tập chứ không tuyên bố điểm số khách quan. Chỉ khẳng định điều được dữ liệu hoặc trích dẫn hỗ trợ; nếu thiếu bằng chứng thì nói rõ. Không bịa nội dung slide. Có thể dùng Markdown cơ bản (**đậm**, danh sách ngắn).\n\n${context}\nNgười học chọn: ${answer.selectedTexts.join(' | ') || '(không chọn phương án)'}\nCâu trả lời tự luận: ${answer.answerText || '(không có)'}\nĐáp án/gợi ý hiện có: ${answer.correctAnswerText || '(chưa có đáp án được ghi nhận)'}\nGiải thích hiện có: ${answer.explanation || '(chưa có)'}`;
 }
 
+export async function handleQuizCoach(req: IncomingMessage & { body?: unknown }, res: ServerResponse, env: Record<string, string> = {
+  OPENAI_API_KEY: process.env.OPENAI_API_KEY || '',
+  OPENAI_MODEL: process.env.OPENAI_MODEL || '',
+}): Promise<void> {
+  const apiKey = env.OPENAI_API_KEY || '';
+  const model = env.OPENAI_MODEL || '';
+  if (req.method !== 'POST') return send(res, 405, { error: 'Phương thức không được hỗ trợ.' });
+  if (!apiKey || apiKey === 'your_openai_api_key_here' || !model || model === 'your_openai_model_id_here') {
+    return send(res, 503, { error: 'Chưa cấu hình OpenAI API key hoặc model trong .env.' });
+  }
+  try {
+    const request = parseRequest(await readBody(req));
+    if (!request) return send(res, 400, { error: 'Dữ liệu câu hỏi không hợp lệ.' });
+    const response = await fetch('https://api.openai.com/v1/responses', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ model, store: false, max_output_tokens: request.action === 'hint' ? 220 : 900, input: makePrompt(request) }),
+    });
+    const result = await response.json() as { output?: { content?: { type?: string; text?: string }[] }[] };
+    if (!response.ok) {
+      const status = response.status === 429 ? 429 : 502;
+      return send(res, status, { error: response.status === 429 ? 'Đang có nhiều yêu cầu. Chờ chút rồi thử lại nhé.' : 'Mascot chưa lấy được phản hồi từ AI. Thử lại sau nhé.' });
+    }
+    const text = result.output?.flatMap(item => item.content ?? []).find(item => item.type === 'output_text')?.text?.trim();
+    if (!text) return send(res, 502, { error: 'AI chưa trả lời được lần này. Thử lại nhé.' });
+    return send(res, 200, { text: text.slice(0, 6000) });
+  } catch (error) {
+    if (error instanceof Error && error.message === 'request_too_large') return send(res, 413, { error: 'Nội dung câu hỏi quá dài để gửi mascot.' });
+    if (error instanceof SyntaxError) return send(res, 400, { error: 'Yêu cầu không đúng định dạng.' });
+    return send(res, 502, { error: 'Không kết nối được với AI. Kiểm tra mạng rồi thử lại nhé.' });
+  }
+}
+
 export function quizCoachPlugin(env: Record<string, string>): Plugin {
-  const apiKey = env.OPENAI_API_KEY || process.env.OPENAI_API_KEY || '';
-  const model = env.OPENAI_MODEL || process.env.OPENAI_MODEL || '';
   return {
     name: 'local-quiz-coach',
     configureServer(server) {
       server.middlewares.use(async (req, res, next) => {
         const pathname = new URL(req.url ?? '/', 'http://localhost').pathname;
         if (pathname !== '/api/quiz-coach') return next();
-        if (req.method !== 'POST') return send(res, 405, { error: 'Phương thức không được hỗ trợ.' });
-        if (!apiKey || apiKey === 'your_openai_api_key_here' || !model || model === 'your_openai_model_id_here') {
-          return send(res, 503, { error: 'Chưa cấu hình OpenAI API key hoặc model trong .env.' });
-        }
-        try {
-          const request = parseRequest(await readBody(req));
-          if (!request) return send(res, 400, { error: 'Dữ liệu câu hỏi không hợp lệ.' });
-          const response = await fetch('https://api.openai.com/v1/responses', {
-            method: 'POST',
-            headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
-            body: JSON.stringify({ model, store: false, max_output_tokens: request.action === 'hint' ? 220 : 900, input: makePrompt(request) }),
-          });
-          const result = await response.json() as { output?: { content?: { type?: string; text?: string }[] }[]; error?: { message?: string } };
-          if (!response.ok) {
-            const status = response.status === 429 ? 429 : 502;
-            return send(res, status, { error: response.status === 429 ? 'Đang có nhiều yêu cầu. Chờ chút rồi thử lại nhé.' : 'Mascot chưa lấy được phản hồi từ AI. Thử lại sau nhé.' });
-          }
-          const text = result.output?.flatMap(item => item.content ?? []).find(item => item.type === 'output_text')?.text?.trim();
-          if (!text) return send(res, 502, { error: 'AI chưa trả lời được lần này. Thử lại nhé.' });
-          return send(res, 200, { text: text.slice(0, 6000) });
-        } catch (error) {
-          if (error instanceof Error && error.message === 'request_too_large') return send(res, 413, { error: 'Nội dung câu hỏi quá dài để gửi mascot.' });
-          if (error instanceof SyntaxError) return send(res, 400, { error: 'Yêu cầu không đúng định dạng.' });
-          return send(res, 502, { error: 'Không kết nối được với AI. Kiểm tra mạng rồi thử lại nhé.' });
-        }
+        return handleQuizCoach(req, res, { OPENAI_API_KEY: env.OPENAI_API_KEY || process.env.OPENAI_API_KEY || '', OPENAI_MODEL: env.OPENAI_MODEL || process.env.OPENAI_MODEL || '' });
       });
     },
   };

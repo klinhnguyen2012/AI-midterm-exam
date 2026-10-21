@@ -36,7 +36,7 @@ function App(){
   const [answerDraft,setAnswerDraft]=useState<Record<string,string[]>>({});
   const [submitted,setSubmitted]=useState(false);
   const [examMode,setExamMode]=useState(false);
-  const [selectedExamMode,setSelectedExamMode]=useState(()=>localStorage.getItem('k4-session-mode')==='exam');
+  const [selectedExamMode,setSelectedExamMode]=useState(()=>localStorage.getItem('k4-session-mode-v2')!=='practice');
   const [seconds,setSeconds]=useState(600);
   const draftRestored=useRef(false);
   const submitAttemptRef=useRef<()=>void>(()=>{});
@@ -44,7 +44,7 @@ function App(){
   useEffect(()=>{localStorage.setItem(KEY_BANK,JSON.stringify(questions.filter(q=>!builtInIds.has(q.id))));},[questions]);
   useEffect(()=>{localStorage.setItem(KEY_BOOKMARKS,JSON.stringify(bookmarks));},[bookmarks]);
   useEffect(()=>{document.documentElement.dataset.theme=dark?'dark':'light';localStorage.setItem('k4-dark',String(dark));},[dark]);
-  useEffect(()=>{localStorage.setItem('k4-session-mode',selectedExamMode?'exam':'practice')},[selectedExamMode]);
+  useEffect(()=>{localStorage.setItem('k4-session-mode-v2',selectedExamMode?'exam':'practice')},[selectedExamMode]);
   useEffect(()=>{if(!examDataLoaded||draftRestored.current)return;draftRestored.current=true;try{const raw=localStorage.getItem('k4-draft-v1');if(!raw)return;const draft=JSON.parse(raw) as {attempt:Attempt;answers:Record<string,string[]>;seconds:number;examMode:boolean};const restored=questions.filter(q=>draft.attempt.questionIds.includes(q.id));if(restored.length===draft.attempt.questionIds.length){startTransition(()=>{setActiveAttempt(draft.attempt);setActiveQuestions(restored);setAnswerDraft(draft.answers);setSeconds(draft.seconds);setExamMode(draft.examMode)})}else localStorage.removeItem('k4-draft-v1')}catch{localStorage.removeItem('k4-draft-v1')}},[questions,examDataLoaded]);
   useEffect(()=>{if(!activeAttempt||submitted||!examMode)return; const timer=window.setInterval(()=>setSeconds(s=>{if(s<=1){window.clearInterval(timer);submitAttemptRef.current();return 0;}return s-1;}),1000);return()=>window.clearInterval(timer);},[activeAttempt,submitted,examMode]);
   useEffect(()=>{if(!activeAttempt||submitted)return;localStorage.setItem('k4-draft-v1',JSON.stringify({attempt:activeAttempt,answers:answerDraft,seconds,examMode}));},[activeAttempt,answerDraft,seconds,examMode,submitted]);

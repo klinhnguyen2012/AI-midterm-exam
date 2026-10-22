@@ -1,19 +1,51 @@
 import { describe, expect, it } from 'vitest';
-import { buildAdditionalExams } from './build-exam-bank.mjs';
+import { assignStudyDays, buildAdditionalExams, inferExamTrack } from './build-exam-bank.mjs';
 
 function facts(count) {
   return Array.from({ length: count }, (_, i) => ({
     id: `source-${i}`,
-    topic: `Topic ${i % 7}`,
-    sourceFile: `04_extracted_slide_text/day-${i % 7}.md`,
+    topic: `Topic ${i % 4}`,
+    sourceFile: `04_extracted_slide_text/day-${i % 4}.md`,
     text: `The course source explains a distinct supported idea number ${i}, including its purpose and application in an AI product.`,
   }));
 }
 
 describe('additional exam builder', () => {
+  it('fills missing past-exam topics from the inferred study day for useful review reports', () => {
+    const questions = [
+      { id: 'past', sourceType: 'past_exam_transcription', day: 3, topic: 'Chưa phân loại' },
+      { id: 'roi', sourceType: 'past_exam_transcription', day: 3, topic: 'Chưa phân loại', stem: 'Tính ROI và khoản chi phí vận hành cho AI agent.' },
+      { id: 'existing', sourceType: 'past_exam_transcription', day: 8, topic: 'RAG' },
+      { id: 'authored', sourceType: 'authored', day: 3, topic: 'Chưa phân loại' },
+    ];
+
+    assignStudyDays(questions);
+
+    expect(questions[0].topic).toMatch(/agent|tác tử/i);
+    expect(questions[1]).toMatchObject({ day: 24, topic: 'Chi phí, hiệu quả đầu tư và định giá' });
+    expect(questions[2].topic).toBe('RAG');
+    expect(questions[3].topic).toBe('Chưa phân loại');
+  });
+
+  it('labels exams with one Phase 2 track while allowing shared Phase 1 questions', () => {
+    const byId = new Map([
+      ['core', { sourceFiles: ['04_extracted_slide_text/phase_1_day_01_15/day.md'] }],
+      ['product', { sourceFiles: ['04_extracted_slide_text/track_1_ai_product_day_16_28/day.md'] }],
+    ]);
+    expect(inferExamTrack({ questionIds: ['core', 'product'] }, byId)).toBe('track-1');
+  });
+
+  it('rejects an exam that mixes questions from different Phase 2 tracks', () => {
+    const byId = new Map([
+      ['product', { sourceFiles: ['04_extracted_slide_text/track_1_ai_product_day_16_28/day.md'] }],
+      ['infra', { sourceFiles: ['04_extracted_slide_text/track_2_ai_infrastructure/day.md'] }],
+    ]);
+    expect(() => inferExamTrack({ questionIds: ['product', 'infra'] }, byId)).toThrow(/trộn nhiều track/i);
+  });
+
   it('creates fixed balanced forms with unique source-backed questions', () => {
     const result = buildAdditionalExams({
-      existingQuestions: [], existingSets: [], facts: facts(18),
+      existingQuestions: [], existingSets: [], facts: facts(24),
       options: { firstNumber: 3, formCount: 3, total: 3, mcqCount: 2, essayCount: 1, randomSeed: 31 },
     });
     expect(result.examSets.map(set => set.id)).toEqual(['exam-03', 'exam-04', 'exam-05']);
@@ -32,7 +64,7 @@ describe('additional exam builder', () => {
   });
 
   it('is deterministic for a fixed seed and keeps question IDs disjoint across new forms', () => {
-    const input = { existingQuestions: [], existingSets: [], facts: facts(18), options: { firstNumber: 3, formCount: 3, total: 3, mcqCount: 2, essayCount: 1, randomSeed: 31 } };
+    const input = { existingQuestions: [], existingSets: [], facts: facts(24), options: { firstNumber: 3, formCount: 3, total: 3, mcqCount: 2, essayCount: 1, randomSeed: 31 } };
     expect(buildAdditionalExams(input)).toEqual(buildAdditionalExams(input));
     const sets = buildAdditionalExams(input).examSets;
     const ids = sets.flatMap(set => set.questionIds);

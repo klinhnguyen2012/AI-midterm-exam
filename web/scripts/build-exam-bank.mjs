@@ -1,6 +1,7 @@
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { cleanOcrQuestion } from './ocr-cleanup.mjs';
 
 const scriptDir = dirname(fileURLToPath(import.meta.url));
 const repoRoot = resolve(scriptDir, '../..');
@@ -164,14 +165,102 @@ function inferStudyDay(question) {
   return 1;
 }
 
-function assignStudyDays(questions) {
-  for (const question of questions) question.day = inferStudyDay(question);
+const reviewTopicsByDay = {
+  1: 'Nền tảng AI và mô hình ngôn ngữ',
+  2: 'Xác định bài toán sản phẩm AI',
+  3: 'Tác tử AI và vòng lặp ReAct',
+  4: 'Prompt và cách hướng dẫn AI',
+  5: 'Tư duy sản phẩm AI',
+  6: 'Quản lý sản phẩm và dự án',
+  7: 'Dữ liệu và chất lượng dữ liệu',
+  8: 'RAG và truy xuất thông tin',
+  9: 'Hệ thống nhiều tác tử AI',
+  10: 'Đường ống xử lý dữ liệu',
+  11: 'An toàn AI và giới hạn bảo vệ',
+  12: 'Đưa AI vào vận hành',
+  13: 'Theo dõi và giám sát hệ thống',
+  14: 'Đánh giá chất lượng AI',
+  15: 'Hạ tầng AI',
+  16: 'Quản lý sản phẩm AI',
+  17: 'Khám phá nhu cầu người dùng',
+  18: 'Thử nghiệm và thiết kế lấy con người làm trung tâm',
+  19: 'Tạo mẫu và phỏng vấn người dùng',
+  20: 'Chỉ số sản phẩm và giữ chân người dùng',
+  21: 'Đạo đức và quy định về AI',
+  22: 'Đưa sản phẩm ra thị trường',
+  23: 'Tăng trưởng sản phẩm AI',
+  24: 'Chi phí, hiệu quả đầu tư và định giá',
+  25: 'Các bên liên quan và phối hợp nhóm',
+  27: 'Đánh giá chất lượng AI',
+  28: 'Lộ trình phát triển sản phẩm AI',
+};
+
+function inferPastExamContentDay(question) {
+  const text = normalize([question.stem, question.explanation, question.evidenceQuote].join(' '));
+  const rules = [
+    [/roi|cost saving|hidden cost|financial model|payback|pricing|investment|workload|chi phi|dinh gia/, 24],
+    [/ragas|faithfulness|context precision|context recall|answer correctness|eval pipeline|golden dataset|benchmark/, 14],
+    [/multi agent|multi-agent|supervisor worker|parallel agents/, 9],
+    [/prompt injection|jailbreak|guardrail|pii|human in the loop/, 11],
+    [/monitoring|latency|drift|observability|incident|p99|alerting/, 13],
+    [/deployment|deploy|production|ci cd|rollout|rollback/, 12],
+    [/data quality|garbage in|selection bias|data pipeline|data quality/, 7],
+    [/rag|retrieval|embedding|vector store|chunking/, 8],
+    [/react|tool call|agent|workflow/, 3],
+    [/system prompt|few shot|prompt|temperature|sampling/, 4],
+    [/roadmap|product lifecycle|problem scoping|stakeholder|requirements/, 28],
+  ];
+  for (const [pattern, day] of rules) if (pattern.test(text)) return day;
+  return null;
+}
+
+export function assignStudyDays(questions) {
+  for (const question of questions) {
+    const hasUnclassifiedTopic = !question.topic?.trim() || /^chưa phân loại$/i.test(question.topic.trim());
+    const shouldClassifyPastExam = question.sourceType === 'past_exam_transcription' && hasUnclassifiedTopic;
+    question.day = shouldClassifyPastExam
+      ? inferPastExamContentDay(question) ?? inferStudyDay(question)
+      : inferStudyDay(question);
+    if (shouldClassifyPastExam) {
+      question.topic = reviewTopicsByDay[question.day] ?? `Ôn tập kiến thức Ngày ${question.day}`;
+    }
+  }
   return questions;
 }
 
 export function normalize(text) {
   return text.normalize('NFKD').replace(/\p{Diacritic}/gu, '').replaceAll('đ', 'd').replaceAll('Đ', 'd')
     .toLocaleLowerCase('vi').replace(/[^a-z0-9]+/g, ' ').trim().replace(/\s+/g, ' ');
+}
+
+export function inferExamTrack(set, questionsById) {
+  const phase2Tracks = new Set();
+  let hasPhase1 = false;
+  let hasPastExamSource = false;
+  for (const id of set.questionIds) {
+    const question = questionsById.get(id);
+    for (const source of question?.sourceFiles ?? []) {
+      if (/02_past_exam_images\//i.test(source)) hasPastExamSource = true;
+      if (/track_1_ai_product/i.test(source)) phase2Tracks.add('track-1');
+      else if (/track_2_ai_infrastructure/i.test(source)) phase2Tracks.add('track-2');
+      else if (/track_3_ai_applications?/i.test(source)) phase2Tracks.add('track-3');
+      else if (/phase_1_day_01_15/i.test(source)) hasPhase1 = true;
+    }
+  }
+  if (phase2Tracks.size > 1) throw new Error(`${set.id} trộn nhiều track Phase 2: ${[...phase2Tracks].join(', ')}.`);
+  if (phase2Tracks.size === 1) return [...phase2Tracks][0];
+  if (hasPastExamSource) return 'common';
+  return hasPhase1 ? 'phase-1' : 'common';
+}
+
+function labelExamTracks(bank) {
+  const questionsById = new Map(bank.questions.map(question => [question.id, question]));
+  bank.examSets = bank.examSets.map(set => {
+    const track = inferExamTrack(set, questionsById);
+    if (!track.startsWith('track-') || /Track [123]/.test(set.title)) return { ...set, track };
+    const trackLabel = track === 'track-1' ? 'Track 1' : track === 'track-2' ? 'Track 2' : 'Track 3';
+    return { ...set, track, title: set.title.replace(/^(Đề \d+\s*[·-]\s*)/, `$1${trackLabel} · `) };
+  });
 }
 
 function isTopicGuessQuestion(stem) {
@@ -216,6 +305,39 @@ function restoreExam01Length(bank) {
   exam01.total = selected.length;
   exam01.mcqCount = selected.filter(question => question.type !== 'essay').length;
   exam01.essayCount = selected.filter(question => question.type === 'essay').length;
+}
+
+function replaceDuplicateExam01Questions(bank) {
+  const exam01 = bank.examSets.find(set => set.id === 'exam-01');
+  if (!exam01) return;
+  const byId = new Map(bank.questions.map(question => [question.id, question]));
+  const usedStems = new Set();
+  const usedIds = new Set(exam01.questionIds);
+  const duplicates = [];
+  for (const [index, id] of exam01.questionIds.entries()) {
+    const question = byId.get(id);
+    if (!question) throw new Error(`Không tìm thấy câu hỏi ${id} của Đề 01.`);
+    const stem = normalize(question.stem);
+    if (usedStems.has(stem)) duplicates.push(index);
+    else usedStems.add(stem);
+  }
+  for (const index of duplicates) {
+    const replacement = bank.questions.find(question =>
+      question.sourceType === 'assistant_authored' && question.type !== 'essay'
+      && question.correctAnswers?.length && !usedIds.has(question.id)
+      && !usedStems.has(normalize(question.stem)),
+    );
+    if (!replacement) throw new Error('Không tìm được câu bổ sung có đáp án để thay câu lặp trong Đề 01.');
+    const repeatedId = exam01.questionIds[index];
+    usedIds.delete(repeatedId);
+    exam01.questionIds[index] = replacement.id;
+    usedIds.add(replacement.id);
+    usedStems.add(normalize(replacement.stem));
+  }
+  if (duplicates.length) {
+    exam01.title = 'Đề 01 · Middle Test K4 + câu bổ sung';
+    exam01.sourceSets = [...new Set([...exam01.sourceSets, 'authored'])];
+  }
 }
 
 function randomFor(seed) {
@@ -405,13 +527,16 @@ function isCandidate(text) {
 
 function run() {
   const bank = JSON.parse(readFileSync(inputPath, 'utf8'));
+  bank.questions = bank.questions.map(cleanOcrQuestion);
   applyExam01Proposals(bank.questions, bank.examSets);
   applyExam02Proposals(bank.questions);
   mergeAuthoredExamBank(bank);
   applyAnswerKeyBackfill(bank);
   const removedGeneratedQuestions = removeUnusableGeneratedQuestions(bank);
   restoreExam01Length(bank);
+  replaceDuplicateExam01Questions(bank);
   assignStudyDays(bank.questions);
+  labelExamTracks(bank);
   const output = { ...bank, generatedExamQuestionCount: 0 };
   writeFileSync(outputPath, `${JSON.stringify(output, null, 2)}\n`);
   console.log(`Giữ ${bank.examSets.length} đề; đã loại ${removedGeneratedQuestions} câu không phù hợp hoặc thiếu dữ kiện để chấm.`);
